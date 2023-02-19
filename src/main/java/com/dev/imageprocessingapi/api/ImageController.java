@@ -27,6 +27,12 @@ public class ImageController {
         return new ResponseEntity<>(id, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/metadata/{id}")
+    public ResponseEntity<PNGMetadata> getImageMetadata(@PathVariable String id) {
+        return ResponseEntity.ok()
+                .body(imageService.getImageMetadata(id));
+    }
+
     @GetMapping("/images/{id}")
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable String id) {
         Image image = imageService.getImage(id).orElseThrow(RuntimeException::new);
@@ -39,7 +45,7 @@ public class ImageController {
     @GetMapping("/test")
     public ResponseEntity<PNGMetadata> test() {
         return ResponseEntity.ok()
-                .body(imageService.getImageMetadata());
+                .body(imageService.getImageMetadata("63f20d0e079805255b7a2d2b"));
     }
 }
 

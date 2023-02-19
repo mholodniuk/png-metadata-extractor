@@ -75,7 +75,7 @@ public class ImageMetaDataExtractor {
     private boolean readPNGHeader(byte[] bytes) {
         String PNGHeader = "89504e470d0a1a0a";
         if (bytes.length < 8)
-            throw new RuntimeException("ASS");
+            throw new RuntimeException("invalid png header length");
         var pngHeaderString = ConversionUtils.encodeHexString(bytes);
 
         return pngHeaderString.equals(PNGHeader);

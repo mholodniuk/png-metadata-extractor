@@ -29,8 +29,8 @@ public class ImageService {
         return image.getId();
     }
 
-    public PNGMetadata getImageMetadata() {
-        Image image = imageRepository.findById("63f20d0e079805255b7a2d2b").orElseThrow(RuntimeException::new);
+    public PNGMetadata getImageMetadata(String id) {
+        Image image = imageRepository.findById(id).orElseThrow(RuntimeException::new);
         PNGMetadata chunks = imageParser.getImageMetadata(image);
 
         System.out.println(chunks.toString());
