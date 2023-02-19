@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.dev.imageprocessingapi.Utils.createHash;
+
 @Service
 @RequiredArgsConstructor
 public class ImageService {
@@ -20,21 +22,25 @@ public class ImageService {
     private final ImageMetaDataExtractor imageParser;
 
     public String addImage(String title, MultipartFile file) throws IOException {
-        Image image = new Image();
-        image.setFileName(title);
-        image.setFileType(file.getContentType());
-        image.setBytes(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+        String id = createHash(file.getBytes());
+        byte[] bytes = file.getBytes();
 
-        image = imageRepository.insert(image);
+        Image image = imageRepository.findById(id).orElseGet(() -> {
+            var newImage = new Image();
+            newImage.setId(createHash(bytes));
+            newImage.setFileName(title);
+            newImage.setFileType(file.getContentType());
+            newImage.setBytes(new Binary(BsonBinarySubType.BINARY, bytes));
+
+            return imageRepository.insert(newImage);
+        });
+
         return image.getId();
     }
 
     public PNGMetadata getImageMetadata(String id) {
         Image image = imageRepository.findById(id).orElseThrow(RuntimeException::new);
-        PNGMetadata chunks = imageParser.getImageMetadata(image);
-
-        System.out.println(chunks.toString());
-        return chunks;
+        return imageParser.getImageMetadata(image);
     }
 
     public Optional<Image> getImage(String id) {
