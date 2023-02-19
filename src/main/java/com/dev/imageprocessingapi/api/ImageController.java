@@ -19,6 +19,8 @@ import java.io.IOException;
 public class ImageController {
     private final ImageService imageService;
 
+//     todo: if image exists -> instead return 303: See Other
+//     todo: frontend should accept this status code and continue
     @PostMapping("/upload-image")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
         String id = imageService.addImage(file.getOriginalFilename(), file);
