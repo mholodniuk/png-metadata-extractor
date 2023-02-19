@@ -43,7 +43,7 @@ public class ImageController {
     @GetMapping("/test")
     public ResponseEntity<PNGMetadata> test() {
         return ResponseEntity.ok()
-                .body(imageService.getImageMetadata("63f20d0e079805255b7a2d2b"));
+                .body(imageService.getImageMetadata("30c632ab5a67f67046fc095faf6a075f"));
     }
 }
 

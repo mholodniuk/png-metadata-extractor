@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetaDataExtractor;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
@@ -39,7 +40,9 @@ public class ImageService {
     }
 
     public PNGMetadata getImageMetadata(String id) {
-        Image image = imageRepository.findById(id).orElseThrow(RuntimeException::new);
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("image not found"));
+
         return imageParser.getImageMetadata(image);
     }
 
