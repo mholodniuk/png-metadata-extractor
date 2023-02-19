@@ -1,7 +1,6 @@
 package com.dev.imageprocessingapi;
 
-import com.dev.imageprocessingapi.consts.PNGChunksDefinitions;
-import com.dev.imageprocessingapi.utils.ConversionUtils;
+import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,12 +21,10 @@ public class ConversionUtilsTests {
 
     @Test
     void IHDRChunkDetection() {
-        byte[] decodedHexString = ConversionUtils.decodeHexString(PNGChunksDefinitions.IHDR_HEX);
+        byte[] decodedHexString = "IHDR".getBytes();
         String encodedHexString = ConversionUtils.encodeHexString(decodedHexString);
 
-        System.out.println(PNGChunksDefinitions.HexDefinitions.IHDR.getHexDefinition());
-
-        Assertions.assertEquals(PNGChunksDefinitions.IHDR, ConversionUtils.convertHexToString(encodedHexString));
+        Assertions.assertEquals("IHDR", ConversionUtils.convertHexToString(encodedHexString));
     }
 
     @Test

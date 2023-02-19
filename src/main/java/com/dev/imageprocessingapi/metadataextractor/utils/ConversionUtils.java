@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.utils;
+package com.dev.imageprocessingapi.metadataextractor.utils;
 
 import java.util.HexFormat;
 

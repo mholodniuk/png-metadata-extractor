@@ -1,6 +1,7 @@
 package com.dev.imageprocessingapi.api;
 
 import com.dev.imageprocessingapi.model.Image;
+import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +37,9 @@ public class ImageController {
     }
 
     @GetMapping("/test")
-    public void test() {
-        imageService.getImageMetadata();
+    public ResponseEntity<PNGMetadata> test() {
+        return ResponseEntity.ok()
+                .body(imageService.getImageMetadata());
     }
 }
 
