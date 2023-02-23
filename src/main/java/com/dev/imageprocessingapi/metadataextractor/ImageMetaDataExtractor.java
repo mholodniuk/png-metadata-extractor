@@ -15,6 +15,8 @@ public class ImageMetaDataExtractor {
 
     private byte[] bytes;
 
+//    https://thiscouldbebetter.wordpress.com/2011/08/26/compressing-and-uncompressing-data-in-java-using-zlib/
+
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
 

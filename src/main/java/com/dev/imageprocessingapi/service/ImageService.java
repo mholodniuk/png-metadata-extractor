@@ -26,17 +26,17 @@ public class ImageService {
         String id = createHash(file.getBytes());
         byte[] bytes = file.getBytes();
 
-        Image image = imageRepository.findById(id).orElseGet(() -> {
+//        Image _image = imageRepository.findById(id).orElseGet(() -> {
             var newImage = new Image();
-            newImage.setId(createHash(bytes));
+//            newImage.setId(createHash(bytes));
             newImage.setFileName(title);
             newImage.setFileType(file.getContentType());
             newImage.setBytes(new Binary(BsonBinarySubType.BINARY, bytes));
 
-            return imageRepository.insert(newImage);
-        });
+            return imageRepository.insert(newImage).getId();
+//        });
 
-        return image.getId();
+//        return _image.getId();
     }
 
     public PNGMetadata getImageMetadata(String id) {
