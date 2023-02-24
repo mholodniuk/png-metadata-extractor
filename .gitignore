@@ -37,3 +37,6 @@ build/
 
 ### MacOS ###
 .DS_Store
+
+### assets ###
+magnitude-spectrum-service/generated

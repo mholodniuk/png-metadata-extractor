@@ -34,7 +34,10 @@ def main(client: MongoClient):
         magnitude = 20 * np.log(cv.magnitude(fourier_shift[:,:,0], fourier_shift[:,:,1]))
         magnitude = cv.normalize(magnitude, None, 0, 255, cv.NORM_MINMAX, cv.CV_8UC1)
 
-        cv.imwrite(filename=f'{id}.png', img=magnitude)
+        if cv.imwrite(filename=f'./generated/{id}.png', img=magnitude):
+            print('saved file')
+        else:
+            print('did not save file')
 
     channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
@@ -43,7 +46,7 @@ def main(client: MongoClient):
 
 if __name__ == '__main__':
     try:
-        mongo_client = MongoClient("mongodb://127.0.0.1:27017")
+        mongo_client = MongoClient("mongodb://localhost:27017")
         print("Connection Successful")
         main(client=mongo_client)
     except KeyboardInterrupt:
