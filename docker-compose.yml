@@ -5,10 +5,10 @@ services:
     ports:
         - 5672:5672
         - 15672:15672
-    volumes:
-      - mongo_data:/data/db
   mongo:
     image: mongo:6.0
+    volumes:
+      - mongo_data:/data/db
     ports:
       - 27017:27017
 
