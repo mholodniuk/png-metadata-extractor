@@ -1,8 +1,12 @@
+import base64
+import io
 from bson import ObjectId
+import bson
 import pika, sys, os
 import cv2 as cv
 import numpy as np
 from pymongo import MongoClient
+from PIL import Image
 
 exchange_name = 'image_to_convert_exchange'
 queue_name = 'image_to_convert_queue'
@@ -19,7 +23,7 @@ def main(client: MongoClient):
 
     def callback(ch, method, properties, body: bytes):
         id = body.decode('utf-8')
-        document = collection.find_one({ "_id": ObjectId(id) })
+        document = collection.find_one({ '_id': ObjectId(id) })
         print(f'Received ID: {id}')
         print(document['fileName'])
 
@@ -34,6 +38,19 @@ def main(client: MongoClient):
         magnitude = 20 * np.log(cv.magnitude(fourier_shift[:,:,0], fourier_shift[:,:,1]))
         magnitude = cv.normalize(magnitude, None, 0, 255, cv.NORM_MINMAX, cv.CV_8UC1)
 
+        _, image_bytes = cv.imencode('.png', magnitude)
+        image_bytes = image_bytes.tobytes()
+        # img_bytes = cv.imencode('.png', magnitude)[1].tobytes()
+
+        result = collection.update_one(filter = {
+            '_id': ObjectId(id)
+        }, update = {
+            '$set': {
+                'magnitude': bson.Binary(image_bytes)
+            }
+        })
+        print(f'affected documents: {result.matched_count}')
+        
         if cv.imwrite(filename=f'./generated/{id}.png', img=magnitude):
             print('saved file')
         else:
