@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.api;
 
+import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.service.ImageService;
@@ -19,12 +20,10 @@ import java.io.IOException;
 public class ImageController {
     private final ImageService imageService;
 
-//     todo: if image exists -> instead return 303: See Other
-//     todo: frontend should accept this status code and continue
     @PostMapping("/upload-image")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
         String id = imageService.addImage(file.getOriginalFilename(), file);
-        return new ResponseEntity<>(id, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @GetMapping("/metadata/{id}")
@@ -35,11 +34,24 @@ public class ImageController {
 
     @GetMapping("/images/{id}")
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable String id) {
-        Image image = imageService.getImage(id).orElseThrow(RuntimeException::new);
+        Image image = imageService.getImage(id)
+                .orElseThrow(() -> new ImageNotFoundException("image not found"));
+
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
                 .body(new ByteArrayResource(image.getBytes().getData()));
+    }
+
+    @GetMapping("/images/{id}/magnitude")
+    public ResponseEntity<ByteArrayResource> getImageMagnitude(@PathVariable String id) {
+        Image image = imageService.getImage(id)
+                .orElseThrow(() -> new ImageNotFoundException("image not found"));
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
+                .body(new ByteArrayResource(image.getMagnitude().getData()));
     }
 
     @GetMapping("/test")
