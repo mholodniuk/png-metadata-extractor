@@ -30,4 +30,7 @@ python receiver.py
 
 Running backend:
 
-`TODO`
+```
+mvn clean install
+mvn spring-boot:run
+```
