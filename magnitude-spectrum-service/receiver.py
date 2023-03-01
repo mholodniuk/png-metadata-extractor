@@ -40,7 +40,6 @@ def main(client: MongoClient):
 
         _, image_bytes = cv.imencode('.png', magnitude)
         image_bytes = image_bytes.tobytes()
-        # img_bytes = cv.imencode('.png', magnitude)[1].tobytes()
 
         result = collection.update_one(filter = {
             '_id': ObjectId(id)
