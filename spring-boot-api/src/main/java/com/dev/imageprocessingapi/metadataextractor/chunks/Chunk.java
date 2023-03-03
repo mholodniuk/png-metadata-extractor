@@ -15,7 +15,7 @@ public class Chunk {
     public static final int CRC_FIELD_LEN = 4;
 
     public enum TYPE {
-        IHDR, gAMA, IDAT, IEND, BASE
+        IHDR, gAMA, IDAT, IEND, UNKNOWN
     }
 
     private TYPE type;

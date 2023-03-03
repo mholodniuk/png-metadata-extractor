@@ -1,11 +1,8 @@
 package com.dev.imageprocessingapi.api;
 
-import com.dev.imageprocessingapi.exception.InvalidObjectIdException;
-import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +32,7 @@ public class ImageController {
                 .body(imageService.getImageMetadata(id));
     }
 
-    @GetMapping(value = "/images/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping("/images/{id}")
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImage(id);
 
@@ -45,7 +42,7 @@ public class ImageController {
                 .body(new ByteArrayResource(image.getBytes().getData()));
     }
 
-    @GetMapping(value = "/images/{id}/magnitude", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping("/images/{id}/magnitude")
     public ResponseEntity<ByteArrayResource> getImageMagnitude(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImage(id);
 

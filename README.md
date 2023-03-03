@@ -34,3 +34,7 @@ Running backend:
 mvn clean install
 mvn spring-boot:run
 ```
+
+todos:
+`add build pack` -> `mvn spring-boot:build-image`
+`add backend observability`

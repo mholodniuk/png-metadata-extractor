@@ -17,7 +17,7 @@ public class ImageEventHandler extends AbstractMongoEventListener<Image> {
     @Override
     public void onAfterSave(AfterSaveEvent<Image> event) {
         var image = event.getSource();
-        log.info("Adding Image ID to the fourier transform generator..." + image.getId());
+        log.info("Adding Image ID to the fourier transform generator... " + image.getId());
         template.convertAndSend(RabbitConfiguration.IMAGE_EXCHANGE, RabbitConfiguration.ROUTING_KEY, image.getId());
     }
 }

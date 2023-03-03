@@ -11,7 +11,7 @@ public class ChunkFactory {
             case "gAMA" -> new gAMA(Chunk.TYPE.gAMA, length, rawBytes, CRC);
             case "IDAT" -> new IDAT(Chunk.TYPE.IDAT, length, rawBytes, CRC);
             case "IEND" -> new IEND(Chunk.TYPE.IEND, length, rawBytes, CRC);
-            default -> new Chunk(Chunk.TYPE.BASE, length, rawBytes, CRC);
+            default -> new Chunk(Chunk.TYPE.UNKNOWN, length, rawBytes, CRC);
         };
     }
 }

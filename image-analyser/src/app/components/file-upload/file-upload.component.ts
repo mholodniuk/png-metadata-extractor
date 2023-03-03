@@ -9,7 +9,7 @@ import { FileService } from 'src/app/services/file.service';
 @Component({
   selector: 'file-upload',
   template: `
-  <div>
+  <div style="height: max-content;">
     <mat-card class="card">
       <mat-card-header>
         <mat-card-title>Uplaod your image</mat-card-title>
@@ -48,6 +48,11 @@ import { FileService } from 'src/app/services/file.service';
         <mat-card-title>{{chunk.type}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="First">Content 1</mat-tab>
+          <mat-tab label="Second">Content 2</mat-tab>
+          <mat-tab label="Third">Content 3</mat-tab>
+        </mat-tab-group>
         {{chunk.length}}
         {{chunk.crc}}
       </mat-card-content>
@@ -102,9 +107,9 @@ export class FileUploadComponent implements OnInit {
       }
       reader.readAsDataURL(file);
 
-      this.currentFileMetadata$ = this.fileUploadService.uploadFile(file)
+      this.currentFileMetadata$ = this.fileUploadService.mockUploadFile(file)
         .pipe(
-          switchMap((id: string) => this.fileUploadService.getImageMetadata(id)),
+          switchMap((id: string) => this.fileUploadService.getMockImageMetadata(id)),
           tap((metadata: PNGData) => console.log(metadata)),
           catchError((error: any) => {
             console.log(error);

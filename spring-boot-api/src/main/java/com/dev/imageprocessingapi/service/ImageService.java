@@ -2,7 +2,6 @@ package com.dev.imageprocessingapi.service;
 
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
-import com.dev.imageprocessingapi.exception.InvalidObjectIdException;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetaDataExtractor;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +36,7 @@ public class ImageService {
     }
 
     // todo: add legit spring validation
-    private byte[] validateAndRetrieveBytes(MultipartFile file) {
+    private byte[] validateAndRetrieveBytes(MultipartFile file) throws ImageUploadException {
         byte[] bytes;
         if (file.isEmpty()) {
             log.warn("Received file is empty");
@@ -58,14 +56,14 @@ public class ImageService {
         return bytes;
     }
 
-    public PNGMetadata getImageMetadata(String id) {
+    public PNGMetadata getImageMetadata(String id) throws ImageNotFoundException {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         return imageParser.getImageMetadata(image);
     }
 
-    public Image getImage(String id) {
+    public Image getImage(String id) throws ImageNotFoundException {
         return imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
     }
