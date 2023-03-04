@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, catchError, of, switchMap, tap } from 'rxjs';
-import { PNGData } from 'src/app/models/PNGData';
+import { PNGData, Properties } from 'src/app/models/PNGData';
 import { FileService } from 'src/app/services/file.service';
 
 // https://medium.com/@tarekabdelkhalek/how-to-create-a-drag-and-drop-file-uploading-in-angular-78d9eba0b854
@@ -43,18 +43,32 @@ import { FileService } from 'src/app/services/file.service';
     </mat-card>
     <hr />
     <div *ngIf="currentFileMetadata$ | async as currentFileMetadata" class="chunk-container">
-      <mat-card *ngFor="let chunk of currentFileMetadata.chunks" class="card">
+      <mat-card *ngFor="let chunk of currentFileMetadata.chunks" class="card wide">
       <mat-card-header>
         <mat-card-title>{{chunk.type}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-tab-group animationDuration="0ms">
-          <mat-tab label="First">Content 1</mat-tab>
-          <mat-tab label="Second">Content 2</mat-tab>
-          <mat-tab label="Third">Content 3</mat-tab>
+        <mat-tab-group animationDuration="10ms">
+          <mat-tab label="Overview">
+            <mat-list role="list">
+              <mat-list-item role="listitem">Length: {{chunk.length}}</mat-list-item>
+              <mat-list-item role="listitem">CRC: {{chunk.crc}}</mat-list-item>
+            </mat-list>
+          </mat-tab>
+          <mat-tab label="Properties" *ngIf="chunk.type !== 'IEND' && chunk.properties">
+          <mat-list role="list">
+              <mat-list-item *ngFor="let property of formatMapToList(chunk.properties)" role="listitem">
+                {{property[0]}}: {{property[1]}}
+              </mat-list-item>
+            </mat-list>
+          </mat-tab>
+          <mat-tab label="Raw bytes" *ngIf="chunk.type !== 'IEND'">
+            <code>{{chunk.rawBytes?.join(' ')}}</code>
+          </mat-tab>
+          <mat-tab label="Errors" *ngIf="chunk.type !== 'IEND'">
+            {{chunk.errors}}
+          </mat-tab>
         </mat-tab-group>
-        {{chunk.length}}
-        {{chunk.crc}}
       </mat-card-content>
       </mat-card>
     </div>
@@ -68,6 +82,9 @@ import { FileService } from 'src/app/services/file.service';
       width: 50%; 
       margin: auto; 
       margin-top: 2rem
+    }
+    .wide {
+      width: 70%
     }
   `],
 })
@@ -117,5 +134,10 @@ export class FileUploadComponent implements OnInit {
           })
         );
     }
+  }
+
+  formatMapToList(props: Properties | undefined): [string, unknown][] {
+    if (props == undefined) return [];
+    return Object.keys(props).map((key: string) => [key, props[key]]);
   }
 }

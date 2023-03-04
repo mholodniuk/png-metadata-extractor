@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
 import { HttpClientModule } from '@angular/common/http';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
@@ -23,7 +24,8 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
     MatIconModule,
     MatButtonModule,
     HttpClientModule,
-    MatTabsModule
+    MatTabsModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

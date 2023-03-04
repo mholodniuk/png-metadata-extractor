@@ -13,8 +13,8 @@ export interface Chunk {
   crc: string
 };
 
-type Properties = { 
-  [id: string]: number; 
+export type Properties = { 
+  [id: string]: unknown; 
 };
 
 export type ID = {
@@ -39,6 +39,12 @@ const IHDR: Chunk = {
     "00",
     "00"
   ],
+  properties: {
+    'Width': 560,
+    'Height': 420,
+    'Bit depth': 8,
+    'Color type': 'RGBA'
+  },
   crc: "737a7af4"
 }
 
