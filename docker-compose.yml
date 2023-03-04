@@ -1,5 +1,6 @@
 version: "3"
 services:
+  # kinda works
   # api:
   #   build: ./spring-boot-api
   #   restart: always
@@ -9,6 +10,17 @@ services:
   #   depends_on:
   #     - mongo
   #     - rabbit
+  # does not work
+  # pajton:
+  #   build: 
+  #     context: ./magnitude-spectrum-service
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   depends_on:
+  #     - mongo
+  #     - rabbit
+  #   networks:
+  #     - rabbitnetwork
   rabbit:
     image: rabbitmq:3-management-alpine
     ports:

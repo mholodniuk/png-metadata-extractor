@@ -1,12 +1,9 @@
-import base64
-import io
 from bson import ObjectId
 import bson
 import pika, sys, os
 import cv2 as cv
 import numpy as np
 from pymongo import MongoClient
-from PIL import Image
 
 exchange_name = 'image_to_convert_exchange'
 queue_name = 'image_to_convert_queue'
