@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
@@ -26,7 +25,7 @@ public class ImageController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    @GetMapping("/metadata/{id}")
+    @GetMapping("/images/{id}/metadata")
     public ResponseEntity<PNGMetadata> getImageMetadata(@PathVariable @MongoObjectId String id) {
         return ResponseEntity.ok()
                 .body(imageService.getImageMetadata(id));
@@ -50,6 +49,16 @@ public class ImageController {
                 .contentType(MediaType.parseMediaType(image.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
                 .body(new ByteArrayResource(image.getMagnitude().getData()));
+    }
+
+    @GetMapping("/images/{id}/serialized")
+    public ResponseEntity<ByteArrayResource> getImageSerialized(@PathVariable @MongoObjectId String id) {
+        var image = imageService.getSerializedImage(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
+                .body(new ByteArrayResource(image.getSerialized().getData()));
     }
 }
 

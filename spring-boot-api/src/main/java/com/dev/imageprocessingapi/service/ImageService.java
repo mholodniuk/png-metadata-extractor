@@ -3,6 +3,7 @@ package com.dev.imageprocessingapi.service;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetaDataExtractor;
+import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.repository.ImageRepository;
@@ -22,6 +23,7 @@ import java.util.Objects;
 public class ImageService {
     private final ImageRepository imageRepository;
     private final ImageMetaDataExtractor imageParser;
+    private final ImageSerializer serializer;
 
     public String addImage(MultipartFile file) {
         byte[] bytes = validateAndRetrieveBytes(file);
@@ -66,5 +68,15 @@ public class ImageService {
     public Image getImage(String id) throws ImageNotFoundException {
         return imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+    }
+
+    public Image getSerializedImage(String id) throws ImageNotFoundException {
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        PNGMetadata metadata = imageParser.getImageMetadata(image);
+        image.setSerialized(serializer.saveChunksAsPNG(metadata));
+
+        return image;
     }
 }

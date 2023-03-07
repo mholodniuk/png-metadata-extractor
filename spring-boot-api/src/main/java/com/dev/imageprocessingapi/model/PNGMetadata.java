@@ -13,5 +13,4 @@ import java.util.List;
 public class PNGMetadata {
     private boolean isValidPNG;
     List<Chunk> chunks;
-    List<String> errors;
 }

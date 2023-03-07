@@ -1,15 +1,13 @@
 export interface PNGData {
   chunks: Chunk[];
-  errors: string[];
   validPNG: boolean;
 };
 
 export interface Chunk {
-  type: string;
+  type: ChunkType;
   length: number;
   rawBytes?: string[];
   properties?: Properties;
-  errors?: string[];
   crc: string
 };
 
@@ -17,9 +15,7 @@ export type Properties = {
   [id: string]: unknown; 
 };
 
-export type ID = {
-  id: string;
-}
+export type ChunkType = 'IDAT' | 'IHDR' | 'gAMA' | 'IEND';
 
 const IHDR: Chunk = {
   type: "IHDR",
@@ -188,6 +184,5 @@ const IEND: Chunk = {
 
 export const mockPNG: PNGData = {
   chunks: [IHDR, gAMA, IDAT, IDAT, IDAT, IEND],
-  errors: [],
   validPNG: true
 }

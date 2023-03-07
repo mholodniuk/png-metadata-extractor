@@ -18,6 +18,14 @@ public class ConversionUtils {
         return hex.parseHex(hexString);
     }
 
+    public static byte[] encodeInteger(int value) {
+        return new byte[] {
+                (byte)(value >>> 24),
+                (byte)(value >>> 16),
+                (byte)(value >>> 8),
+                (byte)value};
+    }
+
     public static String convertStringToHex(String str) {
         StringBuilder hex = new StringBuilder();
         for (char temp : str.toCharArray()) {

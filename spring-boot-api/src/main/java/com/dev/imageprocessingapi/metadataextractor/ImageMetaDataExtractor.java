@@ -7,7 +7,6 @@ import com.dev.imageprocessingapi.model.PNGMetadata;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -15,8 +14,8 @@ public class ImageMetaDataExtractor {
 
     private byte[] bytes;
 
-//    https://thiscouldbebetter.wordpress.com/2011/08/26/compressing-and-uncompressing-data-in-java-using-zlib/
-
+    //    https://thiscouldbebetter.wordpress.com/2011/08/26/compressing-and-uncompressing-data-in-java-using-zlib/
+//    todo: use strategy pattern for chunk data extraction -> not yet
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
 
@@ -27,6 +26,7 @@ public class ImageMetaDataExtractor {
         List<Chunk> chunks = new ArrayList<>();
         int iterator = 8;
 
+        // todo: use builder pattern to build a chunk -> can be done now ?
         while (true) {
             int length = readChunkLength(iterator);
             iterator += Chunk.LENGTH_FIELD_LEN;
@@ -34,7 +34,7 @@ public class ImageMetaDataExtractor {
             String chunkType = readChunkType(iterator);
             iterator += Chunk.TYPE_FIELD_LEN;
 
-            List<String> rawBytes = getRawBytes(iterator, length);
+            List<String> rawBytes = readRawBytes(iterator, length);
             iterator += length;
 
             String CRC = readCRC(iterator);
@@ -46,15 +46,16 @@ public class ImageMetaDataExtractor {
                 break;
             }
         }
-        return new PNGMetadata(isValidPNG, chunks, Collections.emptyList());
+        return new PNGMetadata(isValidPNG, chunks);
     }
 
+    //    todo: extract every "read" function to strategy
     private String readCRC(int iterator) {
         byte[] crcBytes = new byte[]{bytes[iterator], bytes[iterator + 1], bytes[iterator + 2], bytes[iterator + 3]};
         return ConversionUtils.encodeHexString(crcBytes);
     }
 
-    private List<String> getRawBytes(int iterator, int length) {
+    private List<String> readRawBytes(int iterator, int length) {
         byte[] data = new byte[length];
         List<String> rawBytes = new ArrayList<>();
         for (int i = 0; i < length; i++) {

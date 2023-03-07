@@ -9,13 +9,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { HttpClientModule } from '@angular/common/http';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { ChunkTableComponent } from './components/chunk-table/chunk-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    ChunkTableComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +28,8 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
     MatButtonModule,
     HttpClientModule,
     MatTabsModule,
-    MatListModule
+    MatListModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
