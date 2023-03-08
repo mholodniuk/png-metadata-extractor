@@ -6,15 +6,15 @@ public class ConversionUtils {
 
     private static final HexFormat hex = HexFormat.of();
 
-    public static String encodeHexString(byte[] byteArray) {
+    public static String formatHex(byte[] byteArray) {
         return hex.formatHex(byteArray);
     }
 
-    public static String byteToHex(byte num) {
+    public static String toHexDigits(byte num) {
         return hex.toHexDigits(num);
     }
 
-    public static byte[] decodeHexString(String hexString) {
+    public static byte[] parseHexString(String hexString) {
         return hex.parseHex(hexString);
     }
 
@@ -26,14 +26,14 @@ public class ConversionUtils {
                 (byte)value};
     }
 
-    public static String convertStringToHex(String str) {
+    public static String convertSimpleStringToHexString(String str) {
         StringBuilder hex = new StringBuilder();
         for (char temp : str.toCharArray()) {
             hex.append(Integer.toHexString(temp));
         }
         return hex.toString();
     }
-    public static String convertHexToString(String hex) {
+    public static String convertHexStringToSimpleString(String hex) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < hex.length() - 1; i += 2) {
             String tempInHex = hex.substring(i, (i + 2));
