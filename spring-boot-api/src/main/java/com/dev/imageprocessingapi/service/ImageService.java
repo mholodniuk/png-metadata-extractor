@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.exception.ChunksSavingException;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetaDataExtractor;
@@ -70,7 +71,7 @@ public class ImageService {
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
     }
 
-    public Image getSerializedImage(String id) throws ImageNotFoundException {
+    public Image getSerializedImage(String id) throws ImageNotFoundException, ChunksSavingException {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 

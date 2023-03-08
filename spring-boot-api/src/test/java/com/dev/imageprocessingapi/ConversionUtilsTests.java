@@ -12,9 +12,9 @@ import java.util.HexFormat;
 public class ConversionUtilsTests {
     @Test
     void StringEncodingTest() {
-        String hexStringPNG = ConversionUtils.convertStringToHex("PNG");
-        byte[] decodedHexString = ConversionUtils.decodeHexString(hexStringPNG);
-        String encodedHexString = ConversionUtils.encodeHexString(decodedHexString);
+        String hexStringPNG = ConversionUtils.convertSimpleStringToHexString("PNG");
+        byte[] decodedHexString = ConversionUtils.parseHexString(hexStringPNG);
+        String encodedHexString = ConversionUtils.formatHex(decodedHexString);
 
         Assertions.assertEquals(hexStringPNG, encodedHexString);
     }
@@ -22,9 +22,9 @@ public class ConversionUtilsTests {
     @Test
     void IHDRChunkDetection() {
         byte[] decodedHexString = "IHDR".getBytes();
-        String encodedHexString = ConversionUtils.encodeHexString(decodedHexString);
+        String encodedHexString = ConversionUtils.formatHex(decodedHexString);
 
-        Assertions.assertEquals("IHDR", ConversionUtils.convertHexToString(encodedHexString));
+        Assertions.assertEquals("IHDR", ConversionUtils.convertHexStringToSimpleString(encodedHexString));
     }
 
     @Test

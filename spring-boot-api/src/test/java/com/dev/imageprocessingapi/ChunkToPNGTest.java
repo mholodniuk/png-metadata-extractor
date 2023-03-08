@@ -7,12 +7,10 @@ import com.dev.imageprocessingapi.metadataextractor.chunks.gAMA;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 
-@SpringBootTest
 public class ChunkToPNGTest {
     @Test
     public void simpleTest() {

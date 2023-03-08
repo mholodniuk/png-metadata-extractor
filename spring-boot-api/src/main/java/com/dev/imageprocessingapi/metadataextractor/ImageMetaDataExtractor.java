@@ -52,7 +52,7 @@ public class ImageMetaDataExtractor {
     //    todo: extract every "read" function to strategy
     private String readCRC(int iterator) {
         byte[] crcBytes = new byte[]{bytes[iterator], bytes[iterator + 1], bytes[iterator + 2], bytes[iterator + 3]};
-        return ConversionUtils.encodeHexString(crcBytes);
+        return ConversionUtils.formatHex(crcBytes);
     }
 
     private List<String> readRawBytes(int iterator, int length) {
@@ -60,26 +60,26 @@ public class ImageMetaDataExtractor {
         List<String> rawBytes = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             data[i] = bytes[i + iterator];
-            rawBytes.add(ConversionUtils.byteToHex(data[i]));
+            rawBytes.add(ConversionUtils.toHexDigits(data[i]));
         }
         return rawBytes;
     }
 
     private String readChunkType(int iterator) {
         byte[] chunkBytes = new byte[]{bytes[iterator], bytes[iterator + 1], bytes[iterator + 2], bytes[iterator + 3]};
-        return ConversionUtils.convertHexToString(ConversionUtils.encodeHexString(chunkBytes));
+        return ConversionUtils.convertHexStringToSimpleString(ConversionUtils.formatHex(chunkBytes));
     }
 
     private int readChunkLength(int iterator) {
         byte[] lengthBytes = new byte[]{bytes[iterator], bytes[iterator + 1], bytes[iterator + 2], bytes[iterator + 3]};
-        return (int) Long.parseLong(ConversionUtils.encodeHexString(lengthBytes), 16);
+        return (int) Long.parseLong(ConversionUtils.formatHex(lengthBytes), 16);
     }
 
     private boolean readPNGHeader(byte[] bytes) {
         String PNGHeader = "89504e470d0a1a0a";
         if (bytes.length < 8)
             throw new RuntimeException("invalid png header length");
-        var pngHeaderString = ConversionUtils.encodeHexString(bytes);
+        var pngHeaderString = ConversionUtils.formatHex(bytes);
 
         return pngHeaderString.equals(PNGHeader);
     }
