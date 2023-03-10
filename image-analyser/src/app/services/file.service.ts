@@ -8,14 +8,14 @@ import { PNGData, mockPNG } from '../models/PNGData';
 })
 export class FileService {
 
-  private apiUrl: string = 'http://localhost:8080';
+  private apiUrl: string = 'http://localhost:8080/images';
 
   constructor(private http: HttpClient) { }
 
   uploadFile(file: File): Observable<string> {
     const formData = new FormData();
     formData.append("file", file);
-    return this.http.post(`${this.apiUrl}/upload-image` , formData, { responseType: "text" });
+    return this.http.post(`${this.apiUrl}` , formData, { responseType: "text" });
   }
 
   mockUploadFile(file: File): Observable<string> {
@@ -23,7 +23,7 @@ export class FileService {
   }
 
   getImageMetadata(id: string): Observable<PNGData> {
-    return this.http.get<PNGData>(`${this.apiUrl}/metadata/${id}`);
+    return this.http.get<PNGData>(`${this.apiUrl}/${id}/metadata`);
   }
 
   getMockImageMetadata(id: string): Observable<PNGData> {

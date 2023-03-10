@@ -1,18 +1,15 @@
 version: "3"
 services:
-  # kinda works
   api:
     container_name: spring
     hostname: spring
     build: ./spring-boot-api
     restart: always
-    platform: linux/x86_64
     ports:
       - 8080:8080
     depends_on:
       - mongo
       - rabbit
-  # does not work
   pajton:
     container_name: fft-service
     build: 
@@ -22,6 +19,14 @@ services:
     depends_on:
       - mongo
       - rabbit
+      - api
+  frontend:
+    container_name: angular
+    build: ./image-analyser
+    restart: always
+    ports:
+      - 4200:80
+    depends_on:
       - api
   rabbit:
     container_name: rabbit

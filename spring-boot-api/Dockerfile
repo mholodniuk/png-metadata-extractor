@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM bellsoft/liberica-openjdk-alpine-musl:17
 
 WORKDIR /app
 COPY target/image-processing-api-0.0.1-SNAPSHOT.jar image-processing-api.jar

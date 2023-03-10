@@ -138,9 +138,9 @@ export class FileUploadComponent implements OnInit {
       }
       reader.readAsDataURL(file);
 
-      this.currentFileMetadata$ = this.fileUploadService.mockUploadFile(file)
+      this.currentFileMetadata$ = this.fileUploadService.uploadFile(file)
         .pipe(
-          switchMap((id: string) => this.fileUploadService.getMockImageMetadata(id)),
+          switchMap((id: string) => this.fileUploadService.getImageMetadata(id)),
           tap((metadata: PNGData) => {
             this.chunks = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
             this.chunksToDisplay = { ...this.chunks };
