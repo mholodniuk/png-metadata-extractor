@@ -4,7 +4,6 @@ import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
 import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
 import com.dev.imageprocessingapi.metadataextractor.chunks.IHDR;
 import com.dev.imageprocessingapi.metadataextractor.chunks.gAMA;
-import com.dev.imageprocessingapi.model.PNGMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +19,13 @@ public class ChunkToPNGTest {
 
         List<Chunk> chunks = List.of(ihdr, gama);
 
-        imageSerializer.saveChunksAsPNG(new PNGMetadata(true, chunks));
+        imageSerializer.saveAsPNG(chunks);
 
         Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void chunkDeleteTest() {
+        
     }
 }

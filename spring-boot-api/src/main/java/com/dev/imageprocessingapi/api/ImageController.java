@@ -15,23 +15,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RestController
+@RequestMapping("/images")
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
 
-    @PostMapping("/upload-image")
+    @PostMapping
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         var id = imageService.addImage(file);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    @GetMapping("/images/{id}/metadata")
+    @GetMapping("/{id}/metadata")
     public ResponseEntity<PNGMetadata> getImageMetadata(@PathVariable @MongoObjectId String id) {
         return ResponseEntity.ok()
                 .body(imageService.getImageMetadata(id));
     }
 
-    @GetMapping("/images/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImage(id);
 
@@ -41,9 +42,9 @@ public class ImageController {
                 .body(new ByteArrayResource(image.getBytes().getData()));
     }
 
-    @GetMapping("/images/{id}/magnitude")
+    @GetMapping("/{id}/magnitude")
     public ResponseEntity<ByteArrayResource> getImageMagnitude(@PathVariable @MongoObjectId String id) {
-        var image = imageService.getImage(id);
+        var image = imageService.getImageMagnitude(id);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))
@@ -51,14 +52,15 @@ public class ImageController {
                 .body(new ByteArrayResource(image.getMagnitude().getData()));
     }
 
-    @GetMapping("/images/{id}/serialized")
-    public ResponseEntity<ByteArrayResource> getImageSerialized(@PathVariable @MongoObjectId String id) {
-        var image = imageService.getSerializedImage(id);
+    // todo: chunks to be deleted in request body
+    @PatchMapping("/{id}")
+    public ResponseEntity<ByteArrayResource> removeAncillaryChunksFromImage(@PathVariable @MongoObjectId String id) {
+        var image = imageService.removeAncillaryChunks(id);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(new ByteArrayResource(image.getSerialized().getData()));
+                .body(new ByteArrayResource(image.getBytes().getData()));
     }
 }
 

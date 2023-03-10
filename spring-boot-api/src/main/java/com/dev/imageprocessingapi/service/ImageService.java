@@ -1,10 +1,12 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.exception.ChunksSavingException;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
+import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
+import com.dev.imageprocessingapi.metadataextractor.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetaDataExtractor;
 import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
+import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.repository.ImageRepository;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -23,8 +26,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final ImageMetaDataExtractor imageParser;
+    private final ImageMetaDataExtractor parser;
     private final ImageSerializer serializer;
+    private final ImageManipulator manipulator;
 
     public String addImage(MultipartFile file) {
         byte[] bytes = validateAndRetrieveBytes(file);
@@ -63,7 +67,7 @@ public class ImageService {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        return imageParser.getImageMetadata(image);
+        return parser.getImageMetadata(image);
     }
 
     public Image getImage(String id) throws ImageNotFoundException {
@@ -71,13 +75,24 @@ public class ImageService {
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
     }
 
-    public Image getSerializedImage(String id) throws ImageNotFoundException, ChunksSavingException {
+    public Image getImageMagnitude(String id) throws ImageNotFoundException {
+        var image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        if (image.getMagnitude() == null)
+            throw new MagnitudeNotGeneratedException();
+
+        return image;
+    }
+
+    public Image removeAncillaryChunks(String id) {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        PNGMetadata metadata = imageParser.getImageMetadata(image);
-        image.setSerialized(serializer.saveChunksAsPNG(metadata));
+        List<Chunk> criticalChunks = manipulator.removeAncillaryChunks(image);
+        Binary criticalChunksAsBytes = serializer.saveAsPNG(criticalChunks);
+        image.setBytes(criticalChunksAsBytes);
 
+        image = imageRepository.save(image);
         return image;
     }
 }

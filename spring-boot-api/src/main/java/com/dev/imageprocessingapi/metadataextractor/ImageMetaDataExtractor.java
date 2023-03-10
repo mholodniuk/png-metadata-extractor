@@ -49,7 +49,6 @@ public class ImageMetaDataExtractor {
         return new PNGMetadata(isValidPNG, chunks);
     }
 
-    //    todo: extract every "read" function to strategy
     private String readCRC(int iterator) {
         byte[] crcBytes = new byte[]{bytes[iterator], bytes[iterator + 1], bytes[iterator + 2], bytes[iterator + 3]};
         return ConversionUtils.formatHex(crcBytes);
