@@ -1,37 +1,37 @@
 version: "3"
 services:
   # kinda works
-  # api:
-  #   build: ./spring-boot-api
-  #   restart: always
-  #   platform: linux/x86_64
-  #   ports:
-  #     - 8080:8080
-  #   depends_on:
-  #     - mongo
-  #     - rabbit
+  api:
+    container_name: spring
+    hostname: spring
+    build: ./spring-boot-api
+    restart: always
+    platform: linux/x86_64
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo
+      - rabbit
   # does not work
-  # pajton:
-  #   build: 
-  #     context: ./magnitude-spectrum-service
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   depends_on:
-  #     - mongo
-  #     - rabbit
-  #   networks:
-  #     - rabbitnetwork
+  pajton:
+    container_name: fft-service
+    build: 
+      context: ./magnitude-spectrum-service
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mongo
+      - rabbit
+      - api
   rabbit:
-    image: rabbitmq:3-management-alpine
+    container_name: rabbit
+    image: rabbitmq:3.6-management-alpine
     ports:
         - 5672:5672
         - 15672:15672
   mongo:
+    container_name: mongo
+    hostname: mongo
     image: mongo:6.0
-    volumes:
-      - mongo_data:/data/db
     ports:
       - 27017:27017
-
-volumes:
-  mongo_data:

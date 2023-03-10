@@ -21,7 +21,7 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadImage(@RequestParam MultipartFile file) {
         var id = imageService.addImage(file);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }

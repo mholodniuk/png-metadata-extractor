@@ -15,12 +15,12 @@ public class RabbitConfiguration {
 
     @Bean
     public Queue queue() {
-        return new Queue(IMAGE_ID_QUEUE);
+        return new Queue(IMAGE_ID_QUEUE, false);
     }
 
     @Bean
     public DirectExchange exchange() {
-        return new DirectExchange(IMAGE_EXCHANGE);
+        return new DirectExchange(IMAGE_EXCHANGE, false, false);
     }
 
     @Bean

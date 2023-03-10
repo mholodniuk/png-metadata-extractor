@@ -23,9 +23,4 @@ public class ChunkToPNGTest {
 
         Assertions.assertTrue(true);
     }
-
-    @Test
-    public void chunkDeleteTest() {
-        
-    }
 }

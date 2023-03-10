@@ -9,13 +9,31 @@ exchange_name = 'image_to_convert_exchange'
 queue_name = 'image_to_convert_queue'
 routing_key = 'routing-key-fft'
 
+# def create_channel(host, username, password):
+#     credentials = pika.PlainCredentials(username=username, password=password)
+#     parameters = pika.ConnectionParameters(host, credentials=credentials)
+#     connection = pika.BlockingConnection(parameters)
+#     channel = connection.channel()
+#     return channel
+
+# def create_exchange(channel, exchange, queue):
+#     channel.exchange_declare(
+#         exchange=exchange,
+#         exchange_type='direct',
+#         passive=False,
+#         durable=True,
+#         auto_delete=False
+#     )
+#     channel.queue_declare(queue=queue, durable=False)
 
 def main(client: MongoClient):
     db = client['mongo-test']
     collection = db['image']
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbit'))
     channel = connection.channel()
+    channel.exchange_declare(exchange=exchange_name, durable=False, auto_delete=False)
+    channel.queue_declare(queue=queue_name)
     channel.queue_bind(exchange=exchange_name, queue=queue_name)
 
     def callback(ch, method, properties, body: bytes):
@@ -59,7 +77,7 @@ def main(client: MongoClient):
 
 if __name__ == '__main__':
     try:
-        mongo_client = MongoClient("mongodb://localhost:27017")
+        mongo_client = MongoClient("mongodb://mongo:27017")
         print("Connection Successful")
         main(client=mongo_client)
     except KeyboardInterrupt:
