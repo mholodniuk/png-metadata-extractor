@@ -10,6 +10,7 @@ public class ChunkFactory {
             case "IHDR" -> new IHDR(type, length, rawBytes, CRC);
             case "gAMA" -> new gAMA(type, length, rawBytes, CRC);
             case "IDAT" -> new IDAT(type, length, rawBytes, CRC);
+            case "PLTE" -> new PLTE(type, length, rawBytes, CRC);
             case "IEND" -> new IEND(type, length, rawBytes, CRC);
             default -> new Chunk(type, length, rawBytes, CRC);
         };
