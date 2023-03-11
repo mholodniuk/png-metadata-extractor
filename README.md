@@ -35,6 +35,14 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-todos:
-`add build pack` -> `mvn spring-boot:build-image`
-`add backend observability`
+### backend todos:
+- create spring profiles for docker-compose (prod)
+- don't send all `IDAT` chunks. too much useless info -> send only few (and inform if skipped)
+- interpret raw bytes - chunks
+## python service todos:
+- refactor to module
+### frontend todos:
+- create UI for deleting chunks
+- style chunks
+- enable scaling image after loading it
+- 
