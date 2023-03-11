@@ -90,7 +90,7 @@ public class ImageService {
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        if (chunksToDelete != null)
+        if (chunksToDelete != null && chunksToDelete.chunks() != null)
             criticalChunks = manipulator.removeGivenChunks(image, chunksToDelete.chunks());
         else
             criticalChunks = manipulator.removeAncillaryChunks(image);
