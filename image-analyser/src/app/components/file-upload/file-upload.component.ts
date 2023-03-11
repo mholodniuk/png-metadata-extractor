@@ -39,6 +39,7 @@ import { FileService } from 'src/app/services/file.service';
         </div>
       </mat-card-content>
     </mat-card>
+    <button mat-button color="primary" (click)="removeAncillaryChunksAction()">Primary</button>
     <hr />
     <div *ngIf="currentFileMetadata$ | async as currentFileMetadata" class="chunk-container">
       <div class="d-flex justify-content-center">
@@ -169,6 +170,10 @@ export class FileUploadComponent implements OnInit {
 
   isChunkVisible(chunk: string): boolean {
     return this.chunksToDisplay.includes(chunk);
+  }
+
+  removeAncillaryChunksAction(): void {
+    console.log('dupa');
   }
 
   formatMapToList(props: Properties | undefined): [string, unknown][] {

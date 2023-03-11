@@ -23,15 +23,15 @@ public class ImageManipulator {
                 .toList();
     }
 
-    public List<Chunk> removeGivenChunks(Image image, List<String> chunks) {
+    public List<Chunk> removeGivenChunks(Image image, List<String> chunksToDelete) {
         var imageMetadata = extractor.getImageMetadata(image);
 
-        if(chunks.stream().anyMatch(criticalChunks::contains))
+        if(chunksToDelete.stream().anyMatch(criticalChunks::contains))
             throw new InvalidChunkDeletionException();
 
         return imageMetadata
                 .getChunks().stream()
-                .filter(chunk -> !chunks.contains(chunk.getType()))
+                .filter(chunk -> !chunksToDelete.contains(chunk.getType()))
                 .toList();
     }
 }

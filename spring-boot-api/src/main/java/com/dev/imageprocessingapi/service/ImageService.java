@@ -65,7 +65,7 @@ public class ImageService {
     }
 
     public PNGMetadata getImageMetadata(String id) throws ImageNotFoundException {
-        Image image = imageRepository.findById(id)
+        var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         return parser.getImageMetadata(image);
@@ -87,7 +87,7 @@ public class ImageService {
 
     public Image removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
         List<Chunk> criticalChunks;
-        Image image = imageRepository.findById(id)
+        var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         if (chunksToDelete != null)

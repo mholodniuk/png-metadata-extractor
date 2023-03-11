@@ -11,6 +11,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 public class PNGMetadata {
+    private String id;
     private boolean isValidPNG;
-    List<Chunk> chunks;
+    private List<Chunk> chunks;
 }

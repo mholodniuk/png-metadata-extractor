@@ -46,7 +46,7 @@ public class ImageMetadataParser {
                 break;
             }
         }
-        return new PNGMetadata(isValidPNG, chunks);
+        return new PNGMetadata(image.getId(), isValidPNG, chunks);
     }
 
     private String readCRC(int iterator) {

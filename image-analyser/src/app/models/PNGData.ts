@@ -1,4 +1,5 @@
 export interface PNGData {
+  id: string;
   chunks: Chunk[];
   validPNG: boolean;
 };
@@ -184,5 +185,6 @@ const IEND: Chunk = {
 
 export const mockPNG: PNGData = {
   chunks: [IHDR, gAMA, IDAT, IDAT, IDAT, IEND],
-  validPNG: true
+  validPNG: true,
+  id: "123456789098765432123456"
 }

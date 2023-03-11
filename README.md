@@ -36,6 +36,7 @@ mvn spring-boot:run
 ```
 
 ### backend todos:
+- optimize chunk sizes - if raw bytes are too large or there is too many of them
 - create spring profiles for docker-compose (prod)
 - don't send all `IDAT` chunks. too much useless info -> send only few (and inform if skipped)
 - interpret raw bytes - chunks
