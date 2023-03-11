@@ -39,9 +39,9 @@ import { FileService } from 'src/app/services/file.service';
         </div>
       </mat-card-content>
     </mat-card>
-    <button mat-button color="primary" (click)="removeAncillaryChunksAction()">Primary</button>
     <hr />
     <div *ngIf="currentFileMetadata$ | async as currentFileMetadata" class="chunk-container">
+      <button mat-button color="primary" (click)="removeAncillaryChunksAction(currentFileMetadata.id)">Primary</button>
       <div class="d-flex justify-content-center">
         <mat-chip-listbox [multiple]="true">
           <mat-chip-option 
@@ -104,7 +104,7 @@ import { FileService } from 'src/app/services/file.service';
     }
   `],
 })
-export class FileUploadComponent implements OnInit {
+export class FileUploadComponent {
   fileName: string;
   currentFileMetadata$: Observable<PNGData>;
   imageURL: string;
@@ -112,10 +112,6 @@ export class FileUploadComponent implements OnInit {
   chunksToDisplay: string[];
 
   constructor(private fileUploadService: FileService) { }
-
-  ngOnInit(): void {
-    console.log("init")
-  }
 
   onFileSelected(event: Event) {
     const target: HTMLInputElement = event.target as HTMLInputElement;
@@ -172,8 +168,19 @@ export class FileUploadComponent implements OnInit {
     return this.chunksToDisplay.includes(chunk);
   }
 
-  removeAncillaryChunksAction(): void {
-    console.log('dupa');
+  removeAncillaryChunksAction(id: string): void {
+    this.currentFileMetadata$ = this.fileUploadService.removeAncillaryChunks(id)
+        .pipe(
+          switchMap((id: string) => this.fileUploadService.getImageMetadata(id)),
+          tap((metadata: PNGData) => {
+            this.chunksDetected = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
+            this.chunksToDisplay = [...this.chunksDetected];
+          }),
+          catchError((error: any) => {
+            console.log(error);
+            return of(error)
+          })
+        );
   }
 
   formatMapToList(props: Properties | undefined): [string, unknown][] {
