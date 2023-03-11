@@ -18,9 +18,8 @@ export class FileService {
     return this.http.post(`${this.apiUrl}` , formData, { responseType: 'text' });
   }
 
-  // todo: change to patch
   removeAncillaryChunks(id: string): Observable<string> {
-    return this.http.post(`${this.apiUrl}/${id}`, {}, { responseType: 'text' });
+    return this.http.patch(`${this.apiUrl}/${id}`, {}, { responseType: 'text' });
   }
 
   mockUploadFile(file: File): Observable<string> {
