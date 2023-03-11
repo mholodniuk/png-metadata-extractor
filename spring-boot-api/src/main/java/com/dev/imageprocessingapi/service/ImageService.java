@@ -4,11 +4,12 @@ import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
 import com.dev.imageprocessingapi.metadataextractor.ImageManipulator;
-import com.dev.imageprocessingapi.metadataextractor.ImageMetaDataExtractor;
+import com.dev.imageprocessingapi.metadataextractor.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
 import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
+import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final ImageMetaDataExtractor parser;
+    private final ImageMetadataParser parser;
     private final ImageSerializer serializer;
     private final ImageManipulator manipulator;
 
@@ -84,11 +85,16 @@ public class ImageService {
         return image;
     }
 
-    public Image removeAncillaryChunks(String id) {
+    public Image removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
+        List<Chunk> criticalChunks;
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        List<Chunk> criticalChunks = manipulator.removeAncillaryChunks(image);
+        if (chunksToDelete != null)
+            criticalChunks = manipulator.removeGivenChunks(image, chunksToDelete.chunks());
+        else
+            criticalChunks = manipulator.removeAncillaryChunks(image);
+
         Binary criticalChunksAsBytes = serializer.saveAsPNG(criticalChunks);
         image.setBytes(criticalChunksAsBytes);
 

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ImageMetaDataExtractor {
+public class ImageMetadataParser {
 
     private byte[] bytes;
 

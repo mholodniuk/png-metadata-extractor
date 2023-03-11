@@ -1,6 +1,8 @@
 package com.dev.imageprocessingapi.api;
 
+import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
+import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
 import lombok.RequiredArgsConstructor;
@@ -36,31 +38,34 @@ public class ImageController {
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImage(id);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(image.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(new ByteArrayResource(image.getBytes().getData()));
+        return createResponseEntity(image, false);
     }
 
     @GetMapping("/{id}/magnitude")
     public ResponseEntity<ByteArrayResource> getImageMagnitude(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImageMagnitude(id);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(image.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(new ByteArrayResource(image.getMagnitude().getData()));
+        return createResponseEntity(image, true);
     }
 
-    // todo: chunks to be deleted in request body
     @PatchMapping("/{id}")
-    public ResponseEntity<ByteArrayResource> removeAncillaryChunksFromImage(@PathVariable @MongoObjectId String id) {
-        var image = imageService.removeAncillaryChunks(id);
+    public ResponseEntity<ByteArrayResource> removeAncillaryChunksFromImage(@PathVariable @MongoObjectId String id,
+                                                                            @RequestBody(required = false) ChunksToDeleteDTO chunks) {
+        var image = imageService.removeChunks(id, chunks);
+
+        return createResponseEntity(image, false);
+    }
+
+    private ResponseEntity<ByteArrayResource> createResponseEntity(Image image, boolean useMagnitude) {
+        ByteArrayResource byteArrayResource = new ByteArrayResource(
+                useMagnitude ? image.getMagnitude()
+                        .getData() : image.getBytes()
+                        .getData());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(new ByteArrayResource(image.getBytes().getData()));
+                .body(byteArrayResource);
     }
 }
 
