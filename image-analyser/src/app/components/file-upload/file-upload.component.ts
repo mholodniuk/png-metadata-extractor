@@ -32,7 +32,7 @@ import { FileService } from 'src/app/services/file.service';
           <div class="row justify-content-center">
             <div class="col-md-12">
               <div *ngIf="imageURL" class="text-center">
-                <img [src]="imageURL" style="max-width: 400px; width: auto" [alt]="fileName">
+                <img [src]="imageURL" style="max-width:100%; max-height:100%; height: auto;" [alt]="fileName">
               </div>
             </div>
           </div>
@@ -40,8 +40,13 @@ import { FileService } from 'src/app/services/file.service';
       </mat-card-content>
     </mat-card>
     <hr />
-    <div *ngIf="currentFileMetadata$ | async as currentFileMetadata" class="chunk-container">
-      <button mat-button color="primary" (click)="removeAncillaryChunksAction(currentFileMetadata.id)">Primary</button>
+    <div *ngIf="currentFileMetadata$ | async as currentFileMetadata">
+      <div class="d-flex justify-content-start mx-5 align-items-center">
+        <button mat-stroked-button color="primary" class="action-button" (click)="downloadImage()">Download</button>
+        <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunksAction(currentFileMetadata.id)">Remove all ancillary chunks</button>
+        <button mat-raised-button color="warn" class="action-button" (click)="removeNonselectedChunksAction(currentFileMetadata.id)">Remove not selected chunks</button>
+      </div>
+      <hr />
       <div class="d-flex justify-content-center">
         <mat-chip-listbox [multiple]="true">
           <mat-chip-option 
@@ -99,8 +104,8 @@ import { FileService } from 'src/app/services/file.service';
       height: max-content;
       padding-bottom: 2rem;
     }
-    .chunk-chips {
-      
+    .action-button {
+      margin: 0 0.8rem;
     }
   `],
 })
@@ -110,6 +115,7 @@ export class FileUploadComponent {
   imageURL: string;
   chunksDetected: string[];
   chunksToDisplay: string[];
+  reader: FileReader = new FileReader();
 
   constructor(private fileUploadService: FileService) { }
 
@@ -121,13 +127,8 @@ export class FileUploadComponent {
     const file: File = target.files[0];
 
     if (file) {
-      this.fileName = file.name;
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageURL = reader.result as string;
-      }
-      reader.readAsDataURL(file);
+      this.fileName = (file as File).name;
+      this.saveImageFromBlob(file);
 
       this.currentFileMetadata$ = this.fileUploadService.uploadFile(file)
         .pipe(
@@ -168,10 +169,18 @@ export class FileUploadComponent {
     return this.chunksToDisplay.includes(chunk);
   }
 
+  saveImageFromBlob(file: Blob): void {
+    this.reader.onload = () => {
+      this.imageURL = this.reader.result as string;
+    }
+    this.reader.readAsDataURL(file);
+  }
+
   removeAncillaryChunksAction(id: string): void {
     this.currentFileMetadata$ = this.fileUploadService.removeAncillaryChunks(id)
         .pipe(
-          switchMap((id: string) => this.fileUploadService.getImageMetadata(id)),
+          tap((file: Blob) => this.saveImageFromBlob(file)),
+          switchMap(() => this.fileUploadService.getImageMetadata(id)),
           tap((metadata: PNGData) => {
             this.chunksDetected = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
             this.chunksToDisplay = [...this.chunksDetected];
@@ -181,6 +190,14 @@ export class FileUploadComponent {
             return of(error)
           })
         );
+  }
+
+  removeNonselectedChunksAction(id: string): void {
+    console.log("(removeNonselectedChunksAction) NOT IMPLEMENTED");
+  }
+
+  downloadImage(): void {
+    console.log("(downloadImage) NOT IMPLEMENTED");
   }
 
   formatMapToList(props: Properties | undefined): [string, unknown][] {
