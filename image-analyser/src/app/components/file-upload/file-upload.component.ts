@@ -133,10 +133,7 @@ export class FileUploadComponent {
       this.currentFileMetadata$ = this.fileUploadService.uploadFile(file)
         .pipe(
           switchMap((id: string) => this.fileUploadService.getImageMetadata(id)),
-          tap((metadata: PNGData) => {
-            this.chunksDetected = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
-            this.chunksToDisplay = [...this.chunksDetected];
-          }),
+          tap((metadata: PNGData) => this.updateDisplayInformation(metadata)),
           catchError((error: any) => {
             console.log(error);
             return of(error)
@@ -181,10 +178,7 @@ export class FileUploadComponent {
         .pipe(
           tap((file: Blob) => this.saveImageFromBlob(file)),
           switchMap(() => this.fileUploadService.getImageMetadata(id)),
-          tap((metadata: PNGData) => {
-            this.chunksDetected = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
-            this.chunksToDisplay = [...this.chunksDetected];
-          }),
+          tap((metadata: PNGData) => this.updateDisplayInformation(metadata)),
           catchError((error: any) => {
             console.log(error);
             return of(error)
@@ -193,7 +187,22 @@ export class FileUploadComponent {
   }
 
   removeNonselectedChunksAction(id: string): void {
-    console.log("(removeNonselectedChunksAction) NOT IMPLEMENTED");
+    const nonSelectedChunks = this.chunksDetected.filter((chunk: string) => this.chunksToDisplay.indexOf(chunk) < 0);
+    this.currentFileMetadata$ = this.fileUploadService.removeSelectedChunks(id, nonSelectedChunks)
+      .pipe(
+        tap((file: Blob) => this.saveImageFromBlob(file)),
+        switchMap(() => this.fileUploadService.getImageMetadata(id)),
+        tap((metadata: PNGData) => this.updateDisplayInformation(metadata)),
+        catchError((error: any) => {
+          console.log(error);
+          return of(error)
+        })
+      );
+  }
+
+  private updateDisplayInformation(metadata: PNGData) {
+    this.chunksDetected = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
+    this.chunksToDisplay = [...this.chunksDetected];
   }
 
   downloadImage(): void {

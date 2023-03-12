@@ -22,6 +22,12 @@ export class FileService {
     return this.http.patch(`${this.apiUrl}/${id}`, {}, { responseType: 'blob' });
   }
 
+  removeSelectedChunks(id: string, chunks: string[]): Observable<Blob> {
+    return this.http.patch(`${this.apiUrl}/${id}`, {
+      'chunks': chunks
+    }, { responseType: 'blob' });
+  }
+
   mockUploadFile(file: File): Observable<string> {
     return of('123456789');
   }
