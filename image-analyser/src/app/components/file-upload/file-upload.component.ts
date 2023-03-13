@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable, catchError, of, switchMap, tap } from 'rxjs';
 import { Chunk, PNGData, Properties } from 'src/app/models/PNGData';
 import { FileService } from 'src/app/services/file.service';
-
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'file-upload',
@@ -206,7 +206,7 @@ export class FileUploadComponent {
   }
 
   downloadImage(): void {
-    console.log("(downloadImage) NOT IMPLEMENTED");
+    saveAs(this.imageURL, this.fileName);
   }
 
   formatMapToList(props: Properties | undefined): [string, unknown][] {
