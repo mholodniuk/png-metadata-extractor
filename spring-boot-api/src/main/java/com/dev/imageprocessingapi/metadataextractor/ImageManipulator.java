@@ -18,7 +18,7 @@ public class ImageManipulator {
         var imageMetadata = extractor.getImageMetadata(image);
 
         return imageMetadata
-                .getChunks().stream()
+                .chunks().stream()
                 .filter(chunk -> criticalChunks.contains(chunk.getType()))
                 .toList();
     }
@@ -30,7 +30,7 @@ public class ImageManipulator {
             throw new InvalidChunkDeletionException();
 
         return imageMetadata
-                .getChunks().stream()
+                .chunks().stream()
                 .filter(chunk -> !chunksToDelete.contains(chunk.getType()))
                 .toList();
     }

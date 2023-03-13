@@ -14,7 +14,6 @@ public class ImageMetadataParser {
 
     private byte[] bytes;
 
-    //    https://thiscouldbebetter.wordpress.com/2011/08/26/compressing-and-uncompressing-data-in-java-using-zlib/
 //    todo: use strategy pattern for chunk data extraction -> not yet
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
