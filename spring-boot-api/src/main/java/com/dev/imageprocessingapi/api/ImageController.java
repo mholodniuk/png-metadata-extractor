@@ -49,11 +49,10 @@ public class ImageController {
     }
 
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<ByteArrayResource> removeChunksFromImage(@PathVariable @MongoObjectId String id,
+    public ResponseEntity<?> removeChunksFromImage(@PathVariable @MongoObjectId String id,
                                                         @RequestBody(required = false) ChunksToDeleteDTO chunks) {
-        var affectedImage = imageService.removeChunks(id, chunks);
-
-        return createResponseEntity(affectedImage, false);
+        imageService.removeChunks(id, chunks);
+        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }
 
     private ResponseEntity<ByteArrayResource> createResponseEntity(Image image, boolean useMagnitude) {

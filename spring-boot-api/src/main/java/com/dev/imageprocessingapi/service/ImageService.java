@@ -85,7 +85,7 @@ public class ImageService {
         return image;
     }
 
-    public Image removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
+    public void removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
         List<Chunk> criticalChunks;
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
@@ -98,7 +98,6 @@ public class ImageService {
         Binary criticalChunksAsBytes = serializer.saveAsPNG(criticalChunks);
         image.setBytes(criticalChunksAsBytes);
 
-        image = imageRepository.save(image);
-        return image;
+        imageRepository.save(image);
     }
 }
