@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable, catchError, of, switchMap, tap } from 'rxjs';
+import { Observable, Subject, catchError, of, switchMap, tap } from 'rxjs';
 import { Chunk, PNGData, Properties } from 'src/app/models/PNGData';
 import { FileService } from 'src/app/services/file.service';
 import { saveAs } from 'file-saver';
@@ -39,14 +39,18 @@ import { saveAs } from 'file-saver';
         </div>
       </mat-card-content>
     </mat-card>
-    <hr />
+
+
+
+    
+    <hr style="margin: 1rem;"/>
     <div *ngIf="currentFileMetadata$ | async as currentFileMetadata">
       <div class="d-flex justify-content-start mx-5 align-items-center">
         <button mat-stroked-button color="primary" class="action-button" (click)="downloadImage()">Download</button>
-        <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunksAction(currentFileMetadata.id)">Remove all ancillary chunks</button>
-        <button mat-raised-button color="warn" class="action-button" (click)="removeNonselectedChunksAction(currentFileMetadata.id)">Remove not selected chunks</button>
+        <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunks(currentFileMetadata.id)">Remove all ancillary chunks</button>
+        <button mat-raised-button color="warn" class="action-button" (click)="removeNonselectedChunks(currentFileMetadata.id)">Remove not selected chunks</button>
       </div>
-      <hr />
+      <hr style="margin: 1rem;"/>
       <div class="d-flex justify-content-center">
         <mat-chip-listbox [multiple]="true">
           <mat-chip-option 
@@ -86,6 +90,7 @@ import { saveAs } from 'file-saver';
         </mat-card>
       </div>
     </div>
+    <!-- todo: add component store (refactor to components needed in this case) -->
   </div>
   `,
   styles: [`
@@ -115,8 +120,10 @@ export class FileUploadComponent {
   imageURL: string;
   chunksDetected: string[];
   chunksToDisplay: string[];
+  loadingError$: Subject<boolean> = new Subject();
   reader: FileReader = new FileReader();
 
+  // todo: REFACTOR
   constructor(private fileUploadService: FileService) { }
 
   onFileSelected(event: Event) {
@@ -134,9 +141,10 @@ export class FileUploadComponent {
         .pipe(
           switchMap((id: string) => this.fileUploadService.getImageMetadata(id)),
           tap((metadata: PNGData) => this.updateDisplayInformation(metadata)),
-          catchError((error: any) => {
-            console.log(error);
-            return of(error)
+          catchError(() => {
+            console.log("error");
+            this.loadingError$.next(true);
+            return of();
           })
         );
     }
@@ -173,34 +181,29 @@ export class FileUploadComponent {
     this.reader.readAsDataURL(file);
   }
 
-  removeAncillaryChunksAction(id: string): void {
+  removeAncillaryChunks(id: string): void {
     this.currentFileMetadata$ = this.fileUploadService.removeAncillaryChunks(id)
         .pipe(
           tap((file: Blob) => this.saveImageFromBlob(file)),
           switchMap(() => this.fileUploadService.getImageMetadata(id)),
           tap((metadata: PNGData) => this.updateDisplayInformation(metadata)),
-          catchError((error: any) => {
-            console.log(error);
-            return of(error)
-          })
+          catchError(() => of())
         );
   }
 
-  removeNonselectedChunksAction(id: string): void {
+  removeNonselectedChunks(id: string): void {
     const nonSelectedChunks = this.chunksDetected.filter((chunk: string) => this.chunksToDisplay.indexOf(chunk) < 0);
     this.currentFileMetadata$ = this.fileUploadService.removeSelectedChunks(id, nonSelectedChunks)
       .pipe(
         tap((file: Blob) => this.saveImageFromBlob(file)),
         switchMap(() => this.fileUploadService.getImageMetadata(id)),
         tap((metadata: PNGData) => this.updateDisplayInformation(metadata)),
-        catchError((error: any) => {
-          console.log(error);
-          return of(error)
-        })
+        catchError(() => of())
       );
   }
 
   private updateDisplayInformation(metadata: PNGData) {
+    this.loadingError$.next(false);
     this.chunksDetected = [...new Set(metadata.chunks.map((chunk: Chunk) => chunk.type))];
     this.chunksToDisplay = [...this.chunksDetected];
   }
@@ -209,7 +212,7 @@ export class FileUploadComponent {
     saveAs(this.imageURL, this.fileName);
   }
 
-  formatMapToList(props: Properties | undefined): [string, unknown][] {
+  formatMapToList(props?: Properties): [string, unknown][] {
     if (props == undefined) return [];
     return Object.keys(props).map((key: string) => [key, props[key]]);
   }

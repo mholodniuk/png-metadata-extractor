@@ -12,13 +12,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
-import { ChunkTableComponent } from './components/chunk-table/chunk-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FileUploadComponent,
-    ChunkTableComponent
+    FileUploadComponent
   ],
   imports: [
     BrowserModule,
