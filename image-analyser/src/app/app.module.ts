@@ -14,10 +14,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    FileUploadComponent
-  ],
+  declarations: [AppComponent, FileUploadComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -27,9 +24,8 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
     HttpClientModule,
     MatTabsModule,
     MatListModule,
-    MatChipsModule
+    MatChipsModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
