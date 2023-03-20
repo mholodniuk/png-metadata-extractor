@@ -15,6 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @Validated
 @RestController
 @RequestMapping("/images")
@@ -53,6 +55,12 @@ public class ImageController {
                                                         @RequestBody(required = false) ChunksToDeleteDTO chunks) {
         imageService.removeChunks(id, chunks);
         return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(path = "/{id}/IHDR")
+    public ResponseEntity<?> getIHDRData(@PathVariable @MongoObjectId String id) {
+        Map<String, Integer> IHDR =  imageService.getIHDRData(id);
+        return new ResponseEntity<>(IHDR, HttpStatus.OK);
     }
 
     private ResponseEntity<ByteArrayResource> createResponseEntity(Image image, boolean useMagnitude) {

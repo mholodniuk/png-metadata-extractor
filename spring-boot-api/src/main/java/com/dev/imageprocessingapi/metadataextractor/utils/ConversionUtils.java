@@ -26,6 +26,10 @@ public class ConversionUtils {
                 (byte)value};
     }
 
+    public static int fromHexDigits(String hex) {
+        return HexFormat.fromHexDigits(hex);
+    }
+
     public static String convertSimpleStringToHexString(String str) {
         StringBuilder hex = new StringBuilder();
         for (char temp : str.toCharArray()) {

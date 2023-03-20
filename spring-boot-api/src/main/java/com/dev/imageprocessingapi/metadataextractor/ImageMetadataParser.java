@@ -14,7 +14,7 @@ public class ImageMetadataParser {
 
     private byte[] bytes;
 
-//    todo: use strategy pattern for chunk data extraction -> not yet
+    //    todo: use strategy pattern for chunk data extraction -> not yet
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
 
@@ -25,19 +25,18 @@ public class ImageMetadataParser {
         List<Chunk> chunks = new ArrayList<>();
         int iterator = 8;
 
-        // todo: use builder pattern to build a chunk -> can be done now ?
         while (true) {
             int length = readChunkLength(iterator);
-            iterator += Chunk.LENGTH_FIELD_LEN;
+            iterator += Chunk.LENGTH_FIELD_LENGTH;
 
             String chunkType = readChunkType(iterator);
-            iterator += Chunk.TYPE_FIELD_LEN;
+            iterator += Chunk.TYPE_FIELD_LENGTH;
 
             List<String> rawBytes = readRawBytes(iterator, length);
             iterator += length;
 
             String CRC = readCRC(iterator);
-            iterator += Chunk.CRC_FIELD_LEN;
+            iterator += Chunk.CRC_FIELD_LENGTH;
 
             chunks.add(ChunkFactory.create(chunkType, length, rawBytes, CRC));
 
@@ -80,5 +79,12 @@ public class ImageMetadataParser {
         var pngHeaderString = ConversionUtils.formatHex(bytes);
 
         return pngHeaderString.equals(PNGHeader);
+    }
+
+    public List<Chunk> getChunksByName(Image image, String name) {
+        return getImageMetadata(image)
+                .chunks().stream()
+                .filter(chunk -> chunk.getType().equals(name))
+                .toList();
     }
 }

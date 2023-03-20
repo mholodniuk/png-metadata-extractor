@@ -6,6 +6,7 @@ import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
 import com.dev.imageprocessingapi.metadataextractor.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
+import com.dev.imageprocessingapi.metadataextractor.analysers.impl.IHDRAnalyser;
 import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -30,6 +32,7 @@ public class ImageService {
     private final ImageMetadataParser parser;
     private final ImageSerializer serializer;
     private final ImageManipulator manipulator;
+    private final IHDRAnalyser analyser;
 
     public String addImage(MultipartFile file) {
         byte[] bytes = validateAndRetrieveBytes(file);
@@ -43,7 +46,6 @@ public class ImageService {
         return image.getId();
     }
 
-    // todo: add legit spring validation
     private byte[] validateAndRetrieveBytes(MultipartFile file) throws ImageUploadException {
         byte[] bytes;
         if (file.isEmpty()) {
@@ -99,5 +101,14 @@ public class ImageService {
         image.setBytes(criticalChunksAsBytes);
 
         imageRepository.save(image);
+    }
+
+    public Map<String, Integer> getIHDRData(String id) {
+        var image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        Chunk ihdr = parser.getChunksByName(image, "IHDR").get(0);
+
+        return analyser.analyse(ihdr);
     }
 }
