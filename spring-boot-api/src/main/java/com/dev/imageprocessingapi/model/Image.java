@@ -20,4 +20,6 @@ public class Image {
     private Binary bytes;
     @ToString.Exclude
     private Binary magnitude;
+    @ToString.Exclude
+    private Binary hash;
 }

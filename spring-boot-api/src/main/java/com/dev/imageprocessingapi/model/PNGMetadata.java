@@ -1,6 +1,6 @@
 package com.dev.imageprocessingapi.model;
 
-import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 
 import java.util.List;
 

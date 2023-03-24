@@ -1,7 +1,7 @@
 package com.dev.imageprocessingapi;
 
 import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
-import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -6,7 +6,7 @@ import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
 import com.dev.imageprocessingapi.metadataextractor.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.ImageSerializer;
-import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;

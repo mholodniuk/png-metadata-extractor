@@ -1,7 +1,7 @@
 package com.dev.imageprocessingapi.metadataextractor;
 
 import com.dev.imageprocessingapi.exception.InvalidChunkDeletionException;
-import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 import com.dev.imageprocessingapi.model.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class ImageManipulator {
 
         return imageMetadata
                 .chunks().stream()
-                .filter(chunk -> criticalChunks.contains(chunk.getType()))
+                .filter(chunk -> criticalChunks.contains(chunk.type()))
                 .toList();
     }
 
@@ -31,7 +31,7 @@ public class ImageManipulator {
 
         return imageMetadata
                 .chunks().stream()
-                .filter(chunk -> !chunksToDelete.contains(chunk.getType()))
+                .filter(chunk -> !chunksToDelete.contains(chunk.type()))
                 .toList();
     }
 }

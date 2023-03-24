@@ -3,7 +3,7 @@ package com.dev.imageprocessingapi.metadataextractor;
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.IHDRAnalyser;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.gAMAAnalyser;
-import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +22,9 @@ public class ChunkFactory {
         };
     }
 
-    private static Chunk createChunk(String type, int length, List<String> rawBytes,
-                                     String CRC, Analyser analyser) {
+    private static Chunk createChunk(String type, int length,
+                                     List<String> rawBytes, String CRC, Analyser analyser) {
         Map<String, Object> IHDRProperties = analyser.analyse(rawBytes);
-
         return new Chunk(type, length, rawBytes, IHDRProperties, CRC);
     }
 }
