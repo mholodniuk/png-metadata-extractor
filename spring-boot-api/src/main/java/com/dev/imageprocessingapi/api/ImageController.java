@@ -1,21 +1,18 @@
 package com.dev.imageprocessingapi.api;
 
-import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import static com.dev.imageprocessingapi.api.utils.ResponseEntityUtils.createResponseEntity;
 
 @Validated
 @RestController
@@ -55,23 +52,6 @@ public class ImageController {
                                                         @RequestBody(required = false) ChunksToDeleteDTO chunks) {
         imageService.removeChunks(id, chunks);
         return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping(path = "/{id}/IHDR")
-    public ResponseEntity<?> getIHDRData(@PathVariable @MongoObjectId String id) {
-        Map<String, Integer> IHDR =  imageService.getIHDRData(id);
-        return new ResponseEntity<>(IHDR, HttpStatus.OK);
-    }
-
-    private ResponseEntity<ByteArrayResource> createResponseEntity(Image image, boolean useMagnitude) {
-        ByteArrayResource byteArrayResource = new ByteArrayResource(
-                useMagnitude ? image.getMagnitude().getData()
-                        : image.getBytes().getData());
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(image.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(byteArrayResource);
     }
 }
 

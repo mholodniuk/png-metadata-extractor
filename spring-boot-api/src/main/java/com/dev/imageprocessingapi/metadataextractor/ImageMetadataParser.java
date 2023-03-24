@@ -4,17 +4,18 @@ import com.dev.imageprocessingapi.metadataextractor.chunks.Chunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@AllArgsConstructor
 public class ImageMetadataParser {
-
     private byte[] bytes;
+    private final ChunkFactory chunkFactory;
 
-    //    todo: use strategy pattern for chunk data extraction -> not yet
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
 
@@ -38,7 +39,7 @@ public class ImageMetadataParser {
             String CRC = readCRC(iterator);
             iterator += Chunk.CRC_FIELD_LENGTH;
 
-            chunks.add(ChunkFactory.create(chunkType, length, rawBytes, CRC));
+            chunks.add(chunkFactory.create(chunkType, length, rawBytes, CRC));
 
             if (chunkType.equals("IEND")) {
                 break;
@@ -79,12 +80,5 @@ public class ImageMetadataParser {
         var pngHeaderString = ConversionUtils.formatHex(bytes);
 
         return pngHeaderString.equals(PNGHeader);
-    }
-
-    public List<Chunk> getChunksByName(Image image, String name) {
-        return getImageMetadata(image)
-                .chunks().stream()
-                .filter(chunk -> chunk.getType().equals(name))
-                .toList();
     }
 }
