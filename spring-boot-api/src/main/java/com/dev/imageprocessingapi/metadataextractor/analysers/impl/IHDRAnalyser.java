@@ -2,14 +2,12 @@ package com.dev.imageprocessingapi.metadataextractor.analysers.impl;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
 public class IHDRAnalyser implements Analyser {
     private Integer iterator = 0;
     @Override
@@ -33,7 +31,6 @@ public class IHDRAnalyser implements Analyser {
         int interlaceMethod = getIntValue(rawBytes, 1);
         result.put("Interlace method", interlaceMethod);
 
-        iterator = 0;
         return result;
     }
 

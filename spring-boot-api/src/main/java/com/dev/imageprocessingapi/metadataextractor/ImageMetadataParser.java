@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ImageMetadataParser {
     private byte[] bytes;
-    private final ChunkFactory chunkFactory;
 
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
@@ -39,7 +38,7 @@ public class ImageMetadataParser {
             String CRC = readCRC(iterator);
             iterator += Chunk.CRC_FIELD_LENGTH;
 
-            chunks.add(chunkFactory.create(chunkType, length, rawBytes, CRC));
+            chunks.add(ChunkFactory.create(chunkType, length, rawBytes, CRC));
 
             if (chunkType.equals("IEND")) {
                 break;
