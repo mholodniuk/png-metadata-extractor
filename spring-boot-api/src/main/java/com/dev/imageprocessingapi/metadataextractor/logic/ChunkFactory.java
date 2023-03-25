@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.metadataextractor;
+package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.IHDRAnalyser;

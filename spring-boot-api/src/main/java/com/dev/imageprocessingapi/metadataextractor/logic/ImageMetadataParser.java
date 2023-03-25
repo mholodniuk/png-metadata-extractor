@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.metadataextractor;
+package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;

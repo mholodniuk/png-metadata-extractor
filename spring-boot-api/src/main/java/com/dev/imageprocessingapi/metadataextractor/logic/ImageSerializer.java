@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.metadataextractor;
+package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.exception.ChunksSavingException;
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;

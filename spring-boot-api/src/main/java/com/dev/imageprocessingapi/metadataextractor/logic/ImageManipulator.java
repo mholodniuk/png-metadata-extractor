@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.metadataextractor;
+package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.exception.InvalidChunkDeletionException;
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
@@ -11,9 +11,9 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ImageManipulator {
-
     private final List<String> criticalChunks = List.of("IHDR", "PLTE", "IDAT", "IEND");
     private final ImageMetadataParser extractor;
+
     public List<Chunk> removeAncillaryChunks(Image image) {
         var imageMetadata = extractor.getImageMetadata(image);
 
