@@ -15,11 +15,9 @@ public class tIMEAnalyser implements Analyser {
     @Override
     public Map<String, Object> analyse(List<String> rawBytes) {
         if (rawBytes.size() != 7) {
-            // todo: check if not mistaken
             throw new IllegalArgumentException("tIME chunk should contain 7 bytes of data");
         }
-
-        Map<String, Object> result = new HashMap<>();
+        var result = new HashMap<String, Object>();
 
         int year = getIntValue(rawBytes, 2);
         result.put("Year", year);
@@ -38,7 +36,7 @@ public class tIMEAnalyser implements Analyser {
     }
 
     private int getIntValue(List<String> rawBytes, int size) {
-        String hex = rawBytes.stream().skip(iterator).limit(size).collect(Collectors.joining());
+        var hex = rawBytes.stream().skip(iterator).limit(size).collect(Collectors.joining());
         iterator += size;
 
         return ConversionUtils.fromHexDigits(hex);

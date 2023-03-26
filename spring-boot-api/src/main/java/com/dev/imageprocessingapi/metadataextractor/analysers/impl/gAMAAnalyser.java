@@ -10,9 +10,9 @@ import java.util.Map;
 public class gAMAAnalyser implements Analyser {
     @Override
     public Map<String, Object> analyse(List<String> rawBytes) {
-        Map<String, Object> result = new HashMap<>();
+        var result = new HashMap<String, Object>();
 
-        String hex = String.join("", rawBytes);
+        var hex = String.join("", rawBytes);
         int gamma = ConversionUtils.fromHexDigits(hex);
         result.put("Gamma", (double) gamma / 100000);
 

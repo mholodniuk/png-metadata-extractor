@@ -12,7 +12,7 @@ public class IHDRAnalyser implements Analyser {
     private Integer iterator = 0;
     @Override
     public Map<String, Object> analyse(List<String> rawBytes) {
-        Map<String, Object> result = new HashMap<>();
+        var result = new HashMap<String, Object>();
 
         int width = getIntValue(rawBytes, 4);
         result.put("Width", width);
@@ -35,7 +35,7 @@ public class IHDRAnalyser implements Analyser {
     }
 
     private int getIntValue(List<String> rawBytes, int size) {
-        String hex = rawBytes.stream().skip(iterator).limit(size).collect(Collectors.joining());
+        var hex = rawBytes.stream().skip(iterator).limit(size).collect(Collectors.joining());
         iterator += size;
 
         return ConversionUtils.fromHexDigits(hex);

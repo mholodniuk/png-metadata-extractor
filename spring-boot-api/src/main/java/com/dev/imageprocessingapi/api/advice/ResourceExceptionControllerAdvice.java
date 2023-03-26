@@ -16,8 +16,7 @@ public class ResourceExceptionControllerAdvice extends ResponseEntityExceptionHa
     @ExceptionHandler
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException e) {
         log.warn(e.getMessage());
-        ProblemDetail pd = ProblemDetail
-                .forStatusAndDetail(HttpStatus.NOT_FOUND, "Invalid ID");
+        var pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Invalid ID");
         pd.setTitle("Entity Not Found");
 
         return ResponseEntity

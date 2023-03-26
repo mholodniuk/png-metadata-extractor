@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ResponseEntityUtils {
     public static ResponseEntity<ByteArrayResource> createResponseEntity(Image image, boolean useMagnitude) {
-        ByteArrayResource byteArrayResource = new ByteArrayResource(
+        var byteArrayResource = new ByteArrayResource(
                 useMagnitude ? image.getMagnitude().getData()
                         : image.getBytes().getData());
 

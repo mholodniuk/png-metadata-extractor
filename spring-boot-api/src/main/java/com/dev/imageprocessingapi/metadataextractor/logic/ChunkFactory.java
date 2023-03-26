@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 
 @Component
@@ -26,7 +25,7 @@ public class ChunkFactory {
 
     private static Chunk createChunk(String type, int length,
                                      List<String> rawBytes, String CRC, Analyser analyser) {
-        Map<String, Object> IHDRProperties = analyser.analyse(rawBytes);
+        var IHDRProperties = analyser.analyse(rawBytes);
         return new Chunk(type, length, rawBytes, IHDRProperties, CRC);
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class ImageSerializer {
     private static final String PNGHeader = "89504e470d0a1a0a";
     public Binary saveAsPNG(List<Chunk> chunks) {
-        ByteArrayOutputStream resultOutputStream = new ByteArrayOutputStream();
+        var resultOutputStream = new ByteArrayOutputStream();
         try {
             resultOutputStream.write(ConversionUtils.parseHexString(PNGHeader));
             for (Chunk chunk: chunks) {
@@ -29,18 +29,17 @@ public class ImageSerializer {
     }
 
     private byte[] saveSingleChunk(Chunk chunk) throws IOException {
-        byte[] one = ConversionUtils.encodeInteger(chunk.length());
+        byte[] length = ConversionUtils.encodeInteger(chunk.length());
         String typeInHex = ConversionUtils.convertSimpleStringToHexString(chunk.type());
-        byte[] two = ConversionUtils.parseHexString(typeInHex);
-        String bytes = String.join("", chunk.rawBytes());
-        byte[] three = ConversionUtils.parseHexString(bytes);
-        byte[] four = ConversionUtils.parseHexString(chunk.CRC());
+        byte[] type = ConversionUtils.parseHexString(typeInHex);
+        byte[] bytes = ConversionUtils.parseHexString(String.join("", chunk.rawBytes()));
+        byte[] CRC = ConversionUtils.parseHexString(chunk.CRC());
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        outputStream.write(one);
-        outputStream.write(two);
-        outputStream.write(three);
-        outputStream.write(four);
+        var outputStream = new ByteArrayOutputStream();
+        outputStream.write(length);
+        outputStream.write(type);
+        outputStream.write(bytes);
+        outputStream.write(CRC);
 
         return outputStream.toByteArray();
     }
