@@ -38,6 +38,8 @@ public class ImageMetadataParser {
             String CRC = readCRC(iterator);
             iterator += Chunk.CRC_FIELD_LENGTH;
 
+            // todo: pass ihdr chunk
+            // todo: switch to builder
             chunks.add(ChunkFactory.create(chunkType, length, rawBytes, CRC));
 
             if (chunkType.equals("IEND")) {

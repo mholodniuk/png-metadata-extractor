@@ -2,6 +2,8 @@ package com.dev.imageprocessingapi.event;
 
 
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
+import com.github.snksoft.crc.CRC;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -21,10 +23,12 @@ public class ImageModificationListener {
         int index = 0;
         Object[] modifiedArgs = proceedingJoinPoint.getArgs();
 
-        for (Object arg : proceedingJoinPoint.getArgs()) {
+        for (Object arg : modifiedArgs) {
             if (arg instanceof List<?> chunks) {
                 for (Object object : chunks) {
                     Chunk chunk = (Chunk) object;
+                    byte[] bytes = ConversionUtils.parseHexString(String.join("", chunk.rawBytes()));
+                    long crc = CRC.calculateCRC(CRC.Parameters.CRC32, bytes); // does not match ???
                     if (chunk.type().equals("tIME")) {
                         log.info("Found tIME chunk. Changing its last modified to NOW");
                         // todo: now rewrite Instant.now() to bytes
