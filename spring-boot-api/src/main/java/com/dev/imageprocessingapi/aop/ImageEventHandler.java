@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.event;
+package com.dev.imageprocessingapi.aop;
 
 import com.dev.imageprocessingapi.config.RabbitConfiguration;
 import com.dev.imageprocessingapi.model.Image;

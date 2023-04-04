@@ -1,6 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
-import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
@@ -14,39 +14,39 @@ import java.util.List;
 @AllArgsConstructor
 public class ImageMetadataParser {
     private byte[] bytes;
+    private final ChunkInterpreter interpreter;
 
     public PNGMetadata getImageMetadata(Image image) {
         bytes = image.getBytes().getData();
 
         byte[] headerToCheck = new byte[8];
         System.arraycopy(bytes, 0, headerToCheck, 0, 8);
-        boolean isValidPNG = readPNGHeader(headerToCheck);
+        validateHeader(headerToCheck);
 
-        List<Chunk> chunks = new ArrayList<>();
+        List<RawChunk> chunks = new ArrayList<>();
         int iterator = 8;
 
         while (true) {
             int length = readChunkLength(iterator);
-            iterator += Chunk.LENGTH_FIELD_LENGTH;
+            iterator += RawChunk.LENGTH_FIELD_LENGTH;
 
             String chunkType = readChunkType(iterator);
-            iterator += Chunk.TYPE_FIELD_LENGTH;
+            iterator += RawChunk.TYPE_FIELD_LENGTH;
 
             List<String> rawBytes = readRawBytes(iterator, length);
             iterator += length;
 
             String CRC = readCRC(iterator);
-            iterator += Chunk.CRC_FIELD_LENGTH;
+            iterator += RawChunk.CRC_FIELD_LENGTH;
 
-            // todo: pass ihdr chunk
-            // todo: switch to builder
-            chunks.add(ChunkFactory.create(chunkType, length, rawBytes, CRC));
+            chunks.add(new RawChunk(chunkType, length, rawBytes, CRC));
 
             if (chunkType.equals("IEND")) {
                 break;
             }
         }
-        return new PNGMetadata(image.getId(), isValidPNG, chunks);
+
+        return interpreter.appendInterpretedInformation(image.getId(), chunks);
     }
 
     private String readCRC(int iterator) {
@@ -74,12 +74,11 @@ public class ImageMetadataParser {
         return (int) Long.parseLong(ConversionUtils.formatHex(lengthBytes), 16);
     }
 
-    private boolean readPNGHeader(byte[] bytes) {
+    private void validateHeader(byte[] bytes) {
         String PNGHeader = "89504e470d0a1a0a";
-        if (bytes.length < 8)
-            throw new RuntimeException("invalid png header length");
         var pngHeaderString = ConversionUtils.formatHex(bytes);
 
-        return pngHeaderString.equals(PNGHeader);
+        if (bytes.length < 8 || !pngHeaderString.equals(PNGHeader))
+            throw new RuntimeException("invalid png header length");
     }
 }

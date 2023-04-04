@@ -1,5 +1,6 @@
-package com.dev.imageprocessingapi.api;
+package com.dev.imageprocessingapi.config.api;
 
+import com.dev.imageprocessingapi.config.api.utils.ResponseEntityUtils;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.service.ImageService;
@@ -11,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import static com.dev.imageprocessingapi.api.utils.ResponseEntityUtils.createResponseEntity;
 
 @Validated
 @RestController
@@ -37,14 +36,14 @@ public class ImageController {
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImage(id);
 
-        return createResponseEntity(image, false);
+        return ResponseEntityUtils.createResponseEntity(image, false);
     }
 
     @GetMapping("/{id}/magnitude")
     public ResponseEntity<ByteArrayResource> getImageMagnitude(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImageMagnitude(id);
 
-        return createResponseEntity(image, true);
+        return ResponseEntityUtils.createResponseEntity(image, true);
     }
 
     @PatchMapping(path = "/{id}")

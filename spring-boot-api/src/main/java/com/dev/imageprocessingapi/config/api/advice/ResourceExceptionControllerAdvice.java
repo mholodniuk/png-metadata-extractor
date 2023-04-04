@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.api.advice;
+package com.dev.imageprocessingapi.config.api.advice;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

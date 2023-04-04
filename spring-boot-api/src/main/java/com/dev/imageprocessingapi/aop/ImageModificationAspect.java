@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.event;
+package com.dev.imageprocessingapi.aop;
 
 
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
@@ -17,7 +17,7 @@ import java.util.List;
 @Aspect
 @Component
 @EnableAspectJAutoProxy
-public class ImageModificationListener {
+public class ImageModificationAspect {
     @Around("execution(* com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer..*(..))")
     public Object updateLastModifiedMetadata(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         int index = 0;
