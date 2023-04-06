@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.config.api.utils;
+package com.dev.imageprocessingapi.api.utils;
 
 import com.dev.imageprocessingapi.model.Image;
 import org.springframework.core.io.ByteArrayResource;

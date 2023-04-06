@@ -1,6 +1,6 @@
-package com.dev.imageprocessingapi.config.api;
+package com.dev.imageprocessingapi.api;
 
-import com.dev.imageprocessingapi.config.api.utils.ResponseEntityUtils;
+import com.dev.imageprocessingapi.api.utils.ResponseEntityUtils;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.service.ImageService;

@@ -1,12 +1,8 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
-import com.dev.imageprocessingapi.metadataextractor.analysers.impl.IHDRAnalyser;
-import com.dev.imageprocessingapi.metadataextractor.analysers.impl.PLTEAnalyser;
-import com.dev.imageprocessingapi.metadataextractor.analysers.impl.gAMAAnalyser;
-import com.dev.imageprocessingapi.metadataextractor.analysers.impl.tIMEAnalyser;
-import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
-import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
+import com.dev.imageprocessingapi.metadataextractor.analysers.impl.*;
+import com.dev.imageprocessingapi.metadataextractor.model.*;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
