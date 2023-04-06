@@ -37,7 +37,7 @@ public class ChunkInterpreter {
         return switch (type) {
             case "IHDR" -> new IHDRAnalyser();
             case "gAMA" -> new gAMAAnalyser();
-            case "PLTE" -> new PLTEAnalyser((int) IHDRInfo.get("Color type"));
+            case "PLTE" -> new PLTEAnalyser((int) IHDRInfo.get("Color type"), (int) IHDRInfo.get("Bit depth"));
             case "tIME" -> new tIMEAnalyser();
             default -> null;
         };
