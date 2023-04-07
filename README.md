@@ -16,17 +16,11 @@ npm run build --prod
 
 Running docker-compose
 ```
+docker-compose build
 docker-compose up -d
 ```
 
-### backend todos:
-- optimize chunk sizes - if raw bytes are too large or there is too many of them
-- create spring profiles for docker-compose (prod)
-- don't send all `IDAT` chunks. too much useless info -> send only few (and inform if skipped)
-- interpret raw bytes - chunks
-### python service todos:
-- refactor to module
-### frontend todos:
-- update UI for deleting chunks
-- style chunks
-- prevent deleting critical chunks
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/77827442/230593213-9ecfca96-193d-4e26-a2e0-07cd2c5cb228.png" alt='concept diagram' width="620">
+</p>
