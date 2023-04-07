@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Observable, Subject, catchError, of, switchMap, tap } from 'rxjs';
-import { Chunk, PNGData, Properties } from 'src/app/models/PNGData';
-import { FileService } from 'src/app/services/file.service';
+import { Observable } from 'rxjs';
+import { Properties } from 'src/app/models/PNGData';
 import { saveAs } from 'file-saver';
 import { MetadataStore } from './store/metadata.store';
 
@@ -72,7 +71,11 @@ import { MetadataStore } from './store/metadata.store';
                 <mat-tab label="Overview">
                   <mat-list role="list">
                     <mat-list-item role="listitem">Length: {{ chunk.length }}</mat-list-item>
-                    <mat-list-item role="listitem">CRC: {{ chunk.crc }}</mat-list-item>
+                    <mat-list-item role="listitem">CRC: {{ chunk.CRC }}</mat-list-item>
+                    <mat-list-item role="listitem">Public: {{ chunk.isPublic }}</mat-list-item>
+                    <mat-list-item role="listitem">Reserved: {{ chunk.isReserved }}</mat-list-item>
+                    <mat-list-item role="listitem">Unsafe To Copy: {{ chunk.isUnsafeToCopy }}</mat-list-item>
+                    <mat-list-item role="listitem">Critical: {{ chunk.isCritical }}</mat-list-item>
                   </mat-list>
                 </mat-tab>
                 <mat-tab label="Properties" *ngIf="chunk.type !== 'IEND' && chunk.properties">

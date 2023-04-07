@@ -9,7 +9,11 @@ export interface Chunk {
   length: number;
   rawBytes?: string[];
   properties?: Properties;
-  crc: string
+  CRC: string;
+  isCritical: boolean;
+  isPublic: boolean;
+  isReserved: boolean,
+  isUnsafeToCopy: boolean
 };
 
 export type Properties = { 
@@ -42,7 +46,11 @@ const IHDR: Chunk = {
     'Bit depth': 8,
     'Color type': 'RGBA'
   },
-  crc: "737a7af4"
+  CRC: "737a7af4",
+  isCritical: false,
+  isPublic: false,
+  isReserved: false,
+  isUnsafeToCopy: false
 }
 
 const gAMA: Chunk = {
@@ -54,7 +62,11 @@ const gAMA: Chunk = {
     "86",
     "a0"
   ],
-  crc: "31e8965f"
+  CRC: "31e8965f",
+  isCritical: false,
+  isPublic: false,
+  isReserved: false,
+  isUnsafeToCopy: false
 };
 
 const IDAT: Chunk = {
@@ -173,14 +185,22 @@ const IDAT: Chunk = {
     "1a",
     "9c"
   ],
-  crc: "160fb84c"
+  CRC: "160fb84c",
+  isCritical: false,
+  isPublic: false,
+  isReserved: false,
+  isUnsafeToCopy: false
 };
 
 const IEND: Chunk = {
   type: "IEND",
   length: 0,
   rawBytes: [],
-  crc: "ae426082"
+  CRC: "ae426082",
+  isCritical: false,
+  isPublic: false,
+  isReserved: false,
+  isUnsafeToCopy: false
 }
 
 export const mockPNG: PNGData = {
