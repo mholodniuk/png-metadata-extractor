@@ -1,9 +1,7 @@
 package com.dev.imageprocessingapi.aop;
 
 
-import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
-import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
-import com.github.snksoft.crc.CRC;
+import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -26,12 +25,12 @@ public class ImageModificationAspect {
         for (Object arg : modifiedArgs) {
             if (arg instanceof List<?> chunks) {
                 for (Object object : chunks) {
-                    Chunk chunk = (Chunk) object;
-                    byte[] bytes = ConversionUtils.parseHexString(String.join("", chunk.rawBytes()));
-                    long crc = CRC.calculateCRC(CRC.Parameters.CRC32, bytes); // does not match ???
+                    RawChunk chunk = (RawChunk) object;
+//                    byte[] bytes = ConversionUtils.parseHexString(String.join("", chunk.rawBytes()));
+//                    long crc = CRC.calculateCRC(CRC.Parameters.CRC32, bytes); // does not match ???
                     if (chunk.type().equals("tIME")) {
                         log.info("Found tIME chunk. Changing its last modified to NOW");
-                        // todo: now rewrite Instant.now() to bytes
+                        log.info(String.valueOf(Instant.now()));
                     }
                 }
                 modifiedArgs[index] = arg;

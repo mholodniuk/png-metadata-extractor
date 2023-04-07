@@ -21,7 +21,7 @@ public class ImageMetadataParser {
         return interpreter.appendInterpretedInformation(image.getId(), rawChunks);
     }
 
-    private List<RawChunk> readRawChunks(Image image) {
+    public List<RawChunk> readRawChunks(Image image) {
         bytes = image.getBytes().getData();
 
         byte[] headerToCheck = new byte[8];

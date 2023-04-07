@@ -1,9 +1,14 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.exception.*;
-import com.dev.imageprocessingapi.metadataextractor.logic.*;
-import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
-import com.dev.imageprocessingapi.model.*;
+import com.dev.imageprocessingapi.exception.ImageNotFoundException;
+import com.dev.imageprocessingapi.exception.ImageUploadException;
+import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
+import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
+import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
+import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
+import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
+import com.dev.imageprocessingapi.model.Image;
+import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +85,7 @@ public class ImageService {
     }
 
     public void removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
-        List<Chunk> chunksToKeep;
+        List<RawChunk> chunksToKeep;
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 

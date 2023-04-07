@@ -1,7 +1,7 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.exception.ChunksSavingException;
-import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -14,11 +14,11 @@ import java.util.List;
 @Component
 public class ImageSerializer {
     private static final String PNGHeader = "89504e470d0a1a0a";
-    public Binary saveAsPNG(List<Chunk> chunks) {
+    public Binary saveAsPNG(List<RawChunk> chunks) {
         var resultOutputStream = new ByteArrayOutputStream();
         try {
             resultOutputStream.write(ConversionUtils.parseHexString(PNGHeader));
-            for (Chunk chunk: chunks) {
+            for (RawChunk chunk: chunks) {
                 resultOutputStream.write(saveSingleChunk(chunk));
             }
         } catch (IOException e) {
@@ -28,7 +28,7 @@ public class ImageSerializer {
         return new Binary(BsonBinarySubType.BINARY, resultOutputStream.toByteArray());
     }
 
-    private byte[] saveSingleChunk(Chunk chunk) throws IOException {
+    private byte[] saveSingleChunk(RawChunk chunk) throws IOException {
         byte[] length = ConversionUtils.encodeInteger(chunk.length());
         String typeInHex = ConversionUtils.convertSimpleStringToHexString(chunk.type());
         byte[] type = ConversionUtils.parseHexString(typeInHex);
