@@ -16,7 +16,12 @@ public class ImageMetadataParser {
     private byte[] bytes;
     private final ChunkInterpreter interpreter;
 
-    public PNGMetadata getImageMetadata(Image image) {
+    public PNGMetadata processImage(Image image) {
+        List<RawChunk> rawChunks = readRawChunks(image);
+        return interpreter.appendInterpretedInformation(image.getId(), rawChunks);
+    }
+
+    private List<RawChunk> readRawChunks(Image image) {
         bytes = image.getBytes().getData();
 
         byte[] headerToCheck = new byte[8];
@@ -45,8 +50,7 @@ public class ImageMetadataParser {
                 break;
             }
         }
-
-        return interpreter.appendInterpretedInformation(image.getId(), chunks);
+        return chunks;
     }
 
     private String readCRC(int iterator) {

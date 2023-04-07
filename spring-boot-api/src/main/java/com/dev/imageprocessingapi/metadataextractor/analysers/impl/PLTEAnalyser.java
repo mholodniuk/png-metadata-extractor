@@ -21,10 +21,10 @@ public class PLTEAnalyser implements Analyser {
         var result = new HashMap<String, Object>();
         List<Color> palette = new ArrayList<>();
         for (int i = 0; i < rawBytes.size(); i += 3) {
-            int r = ConversionUtils.fromHexDigits(rawBytes.get(i));
-            int g = ConversionUtils.fromHexDigits(rawBytes.get(i + 1));
-            int b = ConversionUtils.fromHexDigits(rawBytes.get(i + 2));
-            palette.add(new Color(r, g, b));
+            int red = ConversionUtils.fromHexDigits(rawBytes.get(i));
+            int green = ConversionUtils.fromHexDigits(rawBytes.get(i + 1));
+            int blue = ConversionUtils.fromHexDigits(rawBytes.get(i + 2));
+            palette.add(new Color(red, green, blue));
         }
         result.put("Number of entries", palette.size());
         result.put("Palette", palette);

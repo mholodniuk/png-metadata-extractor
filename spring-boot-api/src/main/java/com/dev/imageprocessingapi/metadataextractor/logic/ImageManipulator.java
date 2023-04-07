@@ -12,10 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageManipulator {
     private final List<String> criticalChunks = List.of("IHDR", "PLTE", "IDAT", "IEND");
-    private final ImageMetadataParser extractor;
+    private final ImageMetadataParser parser;
 
     public List<Chunk> removeAncillaryChunks(Image image) {
-        var imageMetadata = extractor.getImageMetadata(image);
+        var imageMetadata = parser.processImage(image);
 
         return imageMetadata
                 .chunks().stream()
@@ -24,7 +24,7 @@ public class ImageManipulator {
     }
 
     public List<Chunk> removeGivenChunks(Image image, List<String> chunksToDelete) {
-        var imageMetadata = extractor.getImageMetadata(image);
+        var imageMetadata = parser.processImage(image);
 
         if(chunksToDelete.stream().anyMatch(criticalChunks::contains))
             throw new InvalidChunkDeletionException();

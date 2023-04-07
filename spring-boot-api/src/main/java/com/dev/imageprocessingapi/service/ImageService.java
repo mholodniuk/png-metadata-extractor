@@ -1,14 +1,9 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.exception.ImageNotFoundException;
-import com.dev.imageprocessingapi.exception.ImageUploadException;
-import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
-import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
-import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
-import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
+import com.dev.imageprocessingapi.exception.*;
+import com.dev.imageprocessingapi.metadataextractor.logic.*;
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
-import com.dev.imageprocessingapi.model.Image;
-import com.dev.imageprocessingapi.model.PNGMetadata;
+import com.dev.imageprocessingapi.model.*;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +38,7 @@ public class ImageService {
         return image.getId();
     }
 
-    private byte[] validateAndRetrieveBytes(MultipartFile file) throws ImageUploadException {
+    private byte[] validateAndRetrieveBytes(MultipartFile file) {
         byte[] bytes;
         if (file.isEmpty()) {
             log.warn("Received file is empty");
@@ -63,19 +58,19 @@ public class ImageService {
         return bytes;
     }
 
-    public PNGMetadata getImageMetadata(String id) throws ImageNotFoundException {
+    public PNGMetadata getImageMetadata(String id) {
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        return parser.getImageMetadata(image);
+        return parser.processImage(image);
     }
 
-    public Image getImage(String id) throws ImageNotFoundException {
+    public Image getImage(String id) {
         return imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
     }
 
-    public Image getImageMagnitude(String id) throws ImageNotFoundException {
+    public Image getImageMagnitude(String id) {
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
         if (image.getMagnitude() == null)
@@ -85,16 +80,17 @@ public class ImageService {
     }
 
     public void removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
-        List<Chunk> criticalChunks;
+        List<Chunk> chunksToKeep;
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        if (chunksToDelete != null && chunksToDelete.chunks() != null)
-            criticalChunks = manipulator.removeGivenChunks(image, chunksToDelete.chunks());
-        else
-            criticalChunks = manipulator.removeAncillaryChunks(image);
+        if (chunksToDelete != null && chunksToDelete.chunks() != null) {
+            chunksToKeep = manipulator.removeGivenChunks(image, chunksToDelete.chunks());
+        } else {
+            chunksToKeep = manipulator.removeAncillaryChunks(image);
+        }
 
-        Binary criticalChunksAsBytes = serializer.saveAsPNG(criticalChunks);
+        Binary criticalChunksAsBytes = serializer.saveAsPNG(chunksToKeep);
         image.setBytes(criticalChunksAsBytes);
 
         imageRepository.save(image);
