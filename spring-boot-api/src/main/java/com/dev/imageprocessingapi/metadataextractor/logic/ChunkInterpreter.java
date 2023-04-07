@@ -52,6 +52,7 @@ public class ChunkInterpreter {
             case "gAMA" -> new gAMAAnalyser();
             case "PLTE" -> new PLTEAnalyser((int) IHDRInfo.get("Color type"), (int) IHDRInfo.get("Bit depth"));
             case "tIME" -> new tIMEAnalyser();
+            case "tEXt" -> new tEXtAnalyser();
             default -> null;
         };
     }
