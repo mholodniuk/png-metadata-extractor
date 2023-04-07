@@ -10,8 +10,9 @@ services:
     depends_on:
       - mongo
       - rabbit
-  pajton:
-    container_name: fft-service
+      - magnitude-service
+  magnitude-service:
+    container_name: magnitude-service
     build: 
       context: ./magnitude-spectrum-service
       dockerfile: Dockerfile
