@@ -3,7 +3,7 @@
 Building backend
 ```
 cd spring-boot-api
-mvn clean install -Dmaven.test.skip=true
+mvn clean install
 ```
 
 
