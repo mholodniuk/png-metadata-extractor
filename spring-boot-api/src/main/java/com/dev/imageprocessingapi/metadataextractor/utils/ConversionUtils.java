@@ -1,6 +1,10 @@
 package com.dev.imageprocessingapi.metadataextractor.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HexFormat;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 public class ConversionUtils {
 
@@ -45,5 +49,28 @@ public class ConversionUtils {
             result.append((char) decimal);
         }
         return result.toString();
+    }
+
+    public static String convertHexByteArrayToSimpleString(byte[] bytes) {
+        return ConversionUtils.convertHexStringToSimpleString(ConversionUtils.formatHex(bytes));
+    }
+
+    public static byte[] decompressZlib(byte[] inputBytes) throws DataFormatException {
+        Inflater inflater = new Inflater();
+        inflater.setInput(inputBytes);
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(inputBytes.length)) {
+            byte[] buffer = new byte[1024];
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buffer);
+                outputStream.write(buffer, 0, count);
+            }
+            outputStream.close();
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new DataFormatException("Failed to decompress Zlib data: " + e.getMessage());
+        } finally {
+            inflater.end();
+        }
     }
 }
