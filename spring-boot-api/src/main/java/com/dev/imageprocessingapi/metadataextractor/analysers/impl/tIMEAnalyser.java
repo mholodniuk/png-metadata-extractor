@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// todo: add listener after operation on an image to update tIME chunk
 public class tIMEAnalyser implements Analyser {
     private Integer iterator = 0;
 

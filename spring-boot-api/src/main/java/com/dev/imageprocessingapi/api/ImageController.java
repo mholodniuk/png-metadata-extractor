@@ -48,7 +48,8 @@ public class ImageController {
 
     @PatchMapping(path = "/{id}")
     public ResponseEntity<?> removeChunksFromImage(@PathVariable @MongoObjectId String id,
-                                                        @RequestBody(required = false) ChunksToDeleteDTO chunks) {
+                                                   @RequestBody(required = false) ChunksToDeleteDTO chunks) {
+        // todo: check if request body valid
         imageService.removeChunks(id, chunks);
         return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }
