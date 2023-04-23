@@ -12,9 +12,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { ChunkComponent } from './components/chunk/chunk.component';
 
 @NgModule({
-  declarations: [AppComponent, FileUploadComponent],
+  declarations: [AppComponent, FileUploadComponent, ChunkComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

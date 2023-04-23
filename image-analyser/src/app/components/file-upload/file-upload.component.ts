@@ -62,35 +62,7 @@ import { MetadataStore } from './store/metadata.store';
           </mat-chip-listbox>
         </div>
         <div *ngFor="let chunk of currentFileMetadata.chunks">
-          <mat-card *ngIf="isChunkVisible(chunk.type) | async" class="card wide">
-            <mat-card-header>
-              <mat-card-title>{{ chunk.type }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <mat-tab-group animationDuration="10ms">
-                <mat-tab label="Overview">
-                  <mat-list role="list">
-                    <mat-list-item role="listitem">Length: {{ chunk.length }}</mat-list-item>
-                    <mat-list-item role="listitem">CRC: {{ chunk.CRC }}</mat-list-item>
-                    <mat-list-item role="listitem">Public: {{ chunk.isPublic }}</mat-list-item>
-                    <mat-list-item role="listitem">Reserved: {{ chunk.isReserved }}</mat-list-item>
-                    <mat-list-item role="listitem">Unsafe To Copy: {{ chunk.isUnsafeToCopy }}</mat-list-item>
-                    <mat-list-item role="listitem">Critical: {{ chunk.isCritical }}</mat-list-item>
-                  </mat-list>
-                </mat-tab>
-                <mat-tab label="Properties" *ngIf="chunk.type !== 'IEND' && chunk.properties">
-                  <mat-list role="list">
-                    <mat-list-item *ngFor="let property of formatMapToList(chunk.properties)" role="listitem">
-                      {{ property[0] }}: {{ property[1] }}
-                    </mat-list-item>
-                  </mat-list>
-                </mat-tab>
-                <mat-tab label="Raw bytes" *ngIf="chunk.type !== 'IEND'">
-                  <code>{{ chunk.rawBytes?.join(' ') }}</code>
-                </mat-tab>
-              </mat-tab-group>
-            </mat-card-content>
-          </mat-card>
+          <chunk [chunk]="chunk" [isVisible]="isChunkVisible(chunk.type) | async" />
         </div>
       </div>
     </div>
@@ -105,15 +77,19 @@ import { MetadataStore } from './store/metadata.store';
         margin: auto;
         margin-top: 2rem;
       }
-      .wide {
-        width: 70%;
-      }
       .root-container {
         height: max-content;
         padding-bottom: 2rem;
       }
       .action-button {
         margin: 0 0.8rem;
+      }
+      .color-box {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        display: inline-block;
+        border: 1px solid black;
       }
     `,
   ],
