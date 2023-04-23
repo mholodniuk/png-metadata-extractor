@@ -5,6 +5,7 @@ import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+/*
+ * TODO: extra features
+ *  - file list
+ *  - thumbnail generator (as aspect for upload or batch action)
+ */
 
 @Validated
 @RestController
@@ -49,7 +56,6 @@ public class ImageController {
     @PatchMapping(path = "/{id}")
     public ResponseEntity<?> removeChunksFromImage(@PathVariable @MongoObjectId String id,
                                                    @RequestBody(required = false) ChunksToDeleteDTO chunks) {
-        // todo: check if request body valid
         imageService.removeChunks(id, chunks);
         return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }

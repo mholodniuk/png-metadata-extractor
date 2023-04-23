@@ -1,5 +1,8 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
+import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
+import com.dev.imageprocessingapi.metadataextractor.analysers.impl.*;
+import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
 import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
@@ -9,16 +12,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @AllArgsConstructor
 public class ImageMetadataParser {
+    private static final int RAW_BYTES_LENGTH_LIMIT = 200;
+    private Map<String, Object> IHDRInfo;
     private byte[] bytes;
-    private final ChunkInterpreter interpreter;
 
     public PNGMetadata processImage(Image image) {
         List<RawChunk> rawChunks = readRawChunks(image);
-        return interpreter.appendInterpretedInformation(image.getId(), rawChunks);
+        return appendInterpretedInformation(image.getId(), rawChunks);
     }
 
     public List<RawChunk> readRawChunks(Image image) {
@@ -51,6 +58,45 @@ public class ImageMetadataParser {
             }
         }
         return chunks;
+    }
+
+    private PNGMetadata appendInterpretedInformation(String id, List<RawChunk> chunks) {
+        List<Chunk> processedChunks = new ArrayList<>();
+        RawChunk IHDR = chunks.get(0);
+        IHDRInfo = new IHDRAnalyser().analyse(IHDR.rawBytes());
+
+        for (RawChunk chunk : chunks) {
+            Chunk analysedChunk = processRawChunk(chunk, matchAnalyserToChunkType(chunk.type()));
+            processedChunks.add(analysedChunk);
+        }
+        return new PNGMetadata(id, true, processedChunks);
+    }
+
+    private Analyser matchAnalyserToChunkType(String type) {
+        return switch (type) {
+            case "IHDR" -> new IHDRAnalyser();
+            case "gAMA" -> new gAMAAnalyser();
+            case "PLTE" -> new PLTEAnalyser((int) IHDRInfo.get("Color type"), (int) IHDRInfo.get("Bit depth"));
+            case "tIME" -> new tIMEAnalyser();
+            case "tEXt" -> new tEXtAnalyser();
+            case "zTXt" -> new zTXtAnalyser();
+            default -> null;
+        };
+    }
+
+    private Chunk processRawChunk(RawChunk rawChunk, Analyser analyser) {
+        Map<String, Object> properties = analyser != null ? analyser.analyse(rawChunk.rawBytes()) : null;
+        List<String> rawBytes = rawChunk.length() > RAW_BYTES_LENGTH_LIMIT
+                ? getFirstAndLastStrings(rawChunk.rawBytes(), RAW_BYTES_LENGTH_LIMIT / 2)
+                : rawChunk.rawBytes();
+        return new Chunk(rawChunk.type(), rawChunk.length(), rawBytes, properties, rawChunk.CRC());
+    }
+
+    public static List<String> getFirstAndLastStrings(List<String> strings, int numElements) {
+        return Stream.concat(
+                Stream.concat(strings.stream().limit(numElements), Stream.of("...")),
+                strings.stream().skip(strings.size() - numElements)
+        ).collect(Collectors.toList());
     }
 
     private String readCRC(int iterator) {

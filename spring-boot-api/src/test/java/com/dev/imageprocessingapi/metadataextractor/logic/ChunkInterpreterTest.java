@@ -13,6 +13,6 @@ public class ChunkInterpreterTest {
     public void testGetFirstAndLastStrings() {
         List<String> input = Arrays.asList("aa", "bb", "cc", "dd");
         List<String> expectedOutput = Arrays.asList("aa", "...", "dd");
-        assertEquals(expectedOutput, ChunkInterpreter.getFirstAndLastStrings(input, 1));
+        assertEquals(expectedOutput, ImageMetadataParser.getFirstAndLastStrings(input, 1));
     }
 }
