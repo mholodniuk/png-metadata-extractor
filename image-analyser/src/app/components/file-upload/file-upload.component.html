@@ -1,0 +1,59 @@
+<div class="root-container">
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title>Uplaod your image</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-12">
+            <div class="d-flex flex-row align-items-center">
+              <div class="p-2">
+                <span>{{ fileName || '' }}</span>
+              </div>
+              <div class="p-2">
+                <button mat-mini-fab color="primary" (click)="fileUpload.click()">
+                  <mat-icon>attach_file</mat-icon>
+                </button>
+              </div>
+            </div>
+            <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload/>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div *ngIf="imageURL" class="text-center">
+              <img [src]="imageURL" style="max-width:100%; max-height:100%; height: auto;" [alt]="fileName"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <hr style="margin: 1rem;" />
+  <div *ngIf="currentFileMetadata$ | async as currentFileMetadata">
+    <div class="d-flex justify-content-start mx-5 align-items-center">
+      <button mat-stroked-button color="primary" class="action-button" (click)="downloadImage()">
+        Download
+      </button>
+      <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunks(currentFileMetadata.id)">
+        Remove all ancillary chunks
+      </button>
+      <button mat-raised-button color="warn" class="action-button" (click)="removeNotSelectedChunks(currentFileMetadata.id)">Remove not selected chunks</button>
+    </div>
+    <hr style="margin: 1rem;" />
+    <div class="d-flex justify-content-center">
+      <mat-chip-listbox [multiple]="true" style="margin: 0 1rem;">
+        <mat-chip-option [selected]="isChunkVisible(chunk) | async" 
+          (selectionChange)="changeChunkSelectionStatus(chunk, $event.selected)"
+          *ngFor="let chunk of chunksDetected$ | async"
+        >
+          {{ chunk }}
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+    <div *ngFor="let chunk of currentFileMetadata.chunks">
+      <chunk [chunk]="chunk" [isVisible]="isChunkVisible(chunk.type) | async" />
+    </div>
+  </div>
+</div>
