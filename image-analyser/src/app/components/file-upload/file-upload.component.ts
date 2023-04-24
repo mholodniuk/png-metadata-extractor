@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { Properties } from 'src/app/models/PNGData';
 import { saveAs } from 'file-saver';
 import { MetadataStore } from '../../store/metadata.store';
+import { MatDialog } from '@angular/material/dialog';
+import { MagnitudeDialogComponent } from '../magnitude-dialog/magnitude-dialog.component';
 import { FileService } from 'src/app/services/file.service';
 
 
@@ -22,7 +24,7 @@ export class FileUploadComponent {
   imageURL: string;
   reader: FileReader = new FileReader();
 
-  constructor(private store: MetadataStore) {}
+  constructor(private store: MetadataStore, private dialog: MatDialog, private service: FileService) {}
 
   onFileSelected(event: Event) {
     const target: HTMLInputElement = event.target as HTMLInputElement;
@@ -41,8 +43,11 @@ export class FileUploadComponent {
   }
 
   changeChunkSelectionStatus(chunk: string, isSelected: boolean): void {
-    if (isSelected) this.store.addChunkToSelected(chunk);
-    else this.store.removeChunkFromSelected(chunk);
+    if (isSelected) {
+      this.store.addChunkToSelected(chunk);
+    } else {
+      this.store.removeChunkFromSelected(chunk);
+    }
   }
 
   saveImageFromBlob(file: Blob): void {
@@ -64,7 +69,15 @@ export class FileUploadComponent {
     saveAs(this.imageURL, this.fileName);
   }
 
-  downloadImageMagnitude(id: string): void {
+  openMagnitudeDialog(id: string): void {
+    this.service.getImageMagnitude(id).subscribe(file => {
+      const url = window.URL.createObjectURL(file);
+      this.dialog.open(MagnitudeDialogComponent, {
+        data: {
+          url: url,
+        }
+      });
+    })
   }
 
   formatMapToList(props?: Properties): [string, unknown][] {

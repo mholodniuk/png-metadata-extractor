@@ -10,12 +10,14 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { ChunkComponent } from './components/chunk/chunk.component';
+import { MagnitudeDialogComponent } from './components/magnitude-dialog/magnitude-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, FileUploadComponent, ChunkComponent],
+  declarations: [AppComponent, FileUploadComponent, ChunkComponent, MagnitudeDialogComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -26,6 +28,7 @@ import { ChunkComponent } from './components/chunk/chunk.component';
     MatTabsModule,
     MatListModule,
     MatChipsModule,
+    MatDialogModule
   ],
   bootstrap: [AppComponent],
 })
