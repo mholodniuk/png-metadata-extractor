@@ -36,6 +36,9 @@
       <button mat-stroked-button color="primary" class="action-button" (click)="downloadImage()">
         Download
       </button>
+      <button mat-stroked-button color="primary" class="action-button" (click)="downloadImageMagnitude(currentFileMetadata.id)">
+        Generate magnitude
+      </button>
       <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunks(currentFileMetadata.id)">
         Remove all ancillary chunks
       </button>
@@ -53,7 +56,7 @@
       </mat-chip-listbox>
     </div>
     <div *ngFor="let chunk of currentFileMetadata.chunks">
-      <chunk [chunk]="chunk" [isVisible]="isChunkVisible(chunk.type) | async" />
+      <chunk *ngIf="isChunkVisible(chunk.type) | async" [chunk]="chunk" />
     </div>
   </div>
 </div>

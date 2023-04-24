@@ -23,7 +23,7 @@ export class FileService {
 
   removeSelectedChunks(id: string, chunks: string[]): Observable<object> {
     console.log('receiced:' + chunks)
-    return this.http.patch(`${this.apiUrl}/${id}`,{
+    return this.http.patch(`${this.apiUrl}/${id}`, {
         chunks: chunks,
       }
     );
@@ -33,8 +33,11 @@ export class FileService {
     return this.http.get(`${this.apiUrl}/${id}`, { responseType: 'blob'});
   }
 
+  getImageMagnitude(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/magnitude`, { responseType: 'blob'});
+  }
+
   getImageMetadata(id: string): Observable<PNGData> {
     return this.http.get<PNGData>(`${this.apiUrl}/${id}/metadata`);
   }
-
 }

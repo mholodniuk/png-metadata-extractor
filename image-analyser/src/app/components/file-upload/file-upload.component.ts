@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Properties } from 'src/app/models/PNGData';
 import { saveAs } from 'file-saver';
 import { MetadataStore } from '../../store/metadata.store';
+import { FileService } from 'src/app/services/file.service';
 
 
 @Component({
@@ -61,6 +62,9 @@ export class FileUploadComponent {
 
   downloadImage(): void {
     saveAs(this.imageURL, this.fileName);
+  }
+
+  downloadImageMagnitude(id: string): void {
   }
 
   formatMapToList(props?: Properties): [string, unknown][] {

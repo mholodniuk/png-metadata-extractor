@@ -1,4 +1,4 @@
-<mat-card *ngIf="!!isVisible" class="card wide">
+<mat-card class="card wide">
   <mat-card-header>
     <mat-card-title>{{ chunk.type }}</mat-card-title>
   </mat-card-header>
@@ -26,4 +26,11 @@
       </mat-tab>
     </mat-tab-group>
   </mat-card-content>
+  <ng-container *ngIf="chunk.type === 'PLTE'">
+    <div *ngFor="let color of plte" 
+     [style.background-color]="'rgb(' + color.red + ',' + color.green + ',' + color.blue + ')'"
+     class="color-block">
+</div>
+
+  </ng-container>
 </mat-card>

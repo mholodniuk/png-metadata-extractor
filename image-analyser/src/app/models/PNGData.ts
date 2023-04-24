@@ -20,7 +20,25 @@ export type Properties = {
   [id: string]: unknown; 
 };
 
-export type ChunkType = 'IDAT' | 'IHDR' | 'gAMA' | 'IEND';
+export type ChunkType =
+  | 'IHDR'
+  | 'PLTE'
+  | 'IDAT'
+  | 'IEND'
+  | 'cHRM'
+  | 'gAMA'
+  | 'iCCP'
+  | 'sBIT'
+  | 'sRGB'
+  | 'bKGD'
+  | 'hIST'
+  | 'tRNS'
+  | 'pHYs'
+  | 'sPLT'
+  | 'tIME'
+  | 'iTXt'
+  | 'tEXt'
+  | 'zTXt';
 
 const IHDR: Chunk = {
   type: "IHDR",

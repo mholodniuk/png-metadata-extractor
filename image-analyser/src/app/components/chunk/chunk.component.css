@@ -6,3 +6,10 @@
 .wide {
   width: 70%;
 }
+.color-block {
+  width: 100vh;
+  height: 50px;
+  margin-right: 10px;
+  display: inline-block;
+  margin: auto;
+}
