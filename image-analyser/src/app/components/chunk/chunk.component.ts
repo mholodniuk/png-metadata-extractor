@@ -15,8 +15,8 @@ interface PLTE {
 export class ChunkComponent implements OnInit {
   @Input()
   chunk: Chunk;
-
-  plte: PLTE[];
+  palette: PLTE[];
+  specialChunks = ['PLTE'];
 
   ngOnInit(): void {
     if (this.chunk.type === 'PLTE') {
@@ -26,7 +26,7 @@ export class ChunkComponent implements OnInit {
 
   readPLTE(props?: Properties): any {
     if (props == undefined) return [];
-    this.plte = props['Palette'] as PLTE[]; // todo: fix
+    this.palette = props['Palette'] as PLTE[];
   }
 
   formatMapToList(props?: Properties): [string, unknown][] {

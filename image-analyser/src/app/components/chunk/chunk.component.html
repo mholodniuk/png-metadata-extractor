@@ -15,22 +15,27 @@
         </mat-list>
       </mat-tab>
       <mat-tab label="Properties" *ngIf="chunk.type !== 'IEND' && chunk.properties">
-        <mat-list role="list">  
-          <mat-list-item *ngFor="let property of formatMapToList(chunk.properties)" role="listitem">
-            {{ property[0] }}: {{ property[1] }}
-          </mat-list-item>
-        </mat-list>
+        <div [ngSwitch]="chunk.type">
+          <ng-container *ngSwitchCase="'PLTE'">
+            <div class="palette-container">
+              <div *ngFor="let color of palette" 
+                [style.background-color]="'rgb(' + color.red + ',' + color.green + ',' + color.blue + ')'"
+                class="color-block">
+            </div>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <mat-list role="list"> 
+              <mat-list-item *ngFor="let property of formatMapToList(chunk.properties)" role="listitem">
+                {{ property[0] }}: {{ property[1] }}
+              </mat-list-item>
+            </mat-list>
+          </ng-container>
+        </div>
       </mat-tab>
       <mat-tab label="Raw bytes" *ngIf="chunk.type !== 'IEND'">
         <code>{{ chunk.rawBytes?.join(' ') }}</code>
       </mat-tab>
     </mat-tab-group>
   </mat-card-content>
-  <ng-container *ngIf="chunk.type === 'PLTE'">
-    <div *ngFor="let color of plte" 
-     [style.background-color]="'rgb(' + color.red + ',' + color.green + ',' + color.blue + ')'"
-     class="color-block">
-</div>
-
-  </ng-container>
 </mat-card>

@@ -7,9 +7,12 @@
   width: 70%;
 }
 .color-block {
-  width: 100vh;
-  height: 50px;
-  margin-right: 10px;
+  width: 90%;
+  height: 40px;
   display: inline-block;
   margin: auto;
+}
+.palette-container {
+  margin: 2rem 0;
+  display: flex; /* grid for horizontal or flex for vertical */
 }
