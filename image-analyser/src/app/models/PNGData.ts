@@ -71,6 +71,139 @@ const IHDR: Chunk = {
   isUnsafeToCopy: false
 }
 
+const PLTE: Chunk = {
+  type: "PLTE",
+  length: 66,
+  rawBytes: [
+      "e6",
+      "e6",
+      "... (mock response)",
+      "bb"
+  ],
+  properties: {
+    'Palette': [
+      {
+          "red": 230,
+          "green": 230,
+          "blue": 230
+      },
+      {
+          "red": 93,
+          "green": 134,
+          "blue": 96
+      },
+      {
+          "red": 61,
+          "green": 98,
+          "blue": 58
+      },
+      {
+          "red": 81,
+          "green": 119,
+          "blue": 82
+      },
+      {
+          "red": 21,
+          "green": 54,
+          "blue": 14
+      },
+      {
+          "red": 34,
+          "green": 67,
+          "blue": 27
+      },
+      {
+          "red": 48,
+          "green": 83,
+          "blue": 43
+      },
+      {
+          "red": 255,
+          "green": 255,
+          "blue": 255
+      },
+      {
+          "red": 2,
+          "green": 11,
+          "blue": 1
+      },
+      {
+          "red": 10,
+          "green": 34,
+          "blue": 8
+      },
+      {
+          "red": 71,
+          "green": 116,
+          "blue": 62
+      },
+      {
+          "red": 105,
+          "green": 152,
+          "blue": 99
+      },
+      {
+          "red": 111,
+          "green": 153,
+          "blue": 119
+      },
+      {
+          "red": 38,
+          "green": 88,
+          "blue": 17
+      },
+      {
+          "red": 126,
+          "green": 166,
+          "blue": 127
+      },
+      {
+          "red": 57,
+          "green": 115,
+          "blue": 28
+      },
+      {
+          "red": 142,
+          "green": 176,
+          "blue": 143
+      },
+      {
+          "red": 242,
+          "green": 240,
+          "blue": 243
+      },
+      {
+          "red": 89,
+          "green": 143,
+          "blue": 63
+      },
+      {
+          "red": 167,
+          "green": 185,
+          "blue": 162
+      },
+      {
+          "red": 213,
+          "green": 217,
+          "blue": 210
+      },
+      {
+          "red": 191,
+          "green": 201,
+          "blue": 187
+      }
+    ],
+    "Number of entries": 22
+  },
+  CRC: "ca353f61",
+  isCritical: true,
+  isPublic: true,
+  isReserved: true,
+  isUnsafeToCopy: true
+}
+
+
+
 const gAMA: Chunk = {
   type: "gAMA",
   length: 4,
@@ -222,7 +355,7 @@ const IEND: Chunk = {
 }
 
 export const mockPNG: PNGData = {
-  chunks: [IHDR, gAMA, IDAT, IDAT, IDAT, IEND],
+  chunks: [IHDR, gAMA, PLTE, IDAT, IDAT, IDAT, IEND],
   validPNG: true,
   id: "123456789098765432123456"
 }

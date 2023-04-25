@@ -17,11 +17,16 @@ export class ChunkComponent implements OnInit {
   chunk: Chunk;
   palette: PLTE[];
   specialChunks = ['PLTE'];
+  isVertical = false;
 
   ngOnInit(): void {
     if (this.chunk.type === 'PLTE') {
       this.readPLTE(this.chunk.properties);
     }
+  }
+
+  toggleVerticalHorizontal(): void {
+    this.isVertical = !this.isVertical;
   }
 
   readPLTE(props?: Properties): any {

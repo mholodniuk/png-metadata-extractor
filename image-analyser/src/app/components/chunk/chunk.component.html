@@ -17,12 +17,15 @@
       <mat-tab label="Properties" *ngIf="chunk.type !== 'IEND' && chunk.properties">
         <div [ngSwitch]="chunk.type">
           <ng-container *ngSwitchCase="'PLTE'">
-            <div class="palette-container">
+            <div class="palette-container" [style.display]="isVertical ? 'grid' : 'flex'">
               <div *ngFor="let color of palette" 
                 [style.background-color]="'rgb(' + color.red + ',' + color.green + ',' + color.blue + ')'"
                 class="color-block">
+              </div>
             </div>
-            </div>
+            <button mat-button style="float: right;" (click)="toggleVerticalHorizontal()">
+              Toggle to {{isVertical ? 'horizontal' : 'vertical'}} view
+            </button>
           </ng-container>
           <ng-container *ngSwitchDefault>
             <mat-list role="list"> 
