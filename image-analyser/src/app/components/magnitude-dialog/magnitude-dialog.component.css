@@ -1,4 +1,11 @@
 .magnitude-dialog {
-    height: 200px;
-    width: 200px;
+  height: 50vh;
+  width: 80vh;
+  margin: 1rem;
+}
+
+.background-image {
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
 }
