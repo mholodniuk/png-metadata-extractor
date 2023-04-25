@@ -1,3 +1,7 @@
+<div class="error">
+  {{ error$ | async }}
+</div>
+
 <div class="root-container">
   <mat-card class="card">
     <mat-card-header>
@@ -32,9 +36,9 @@
   </mat-card>
   <hr style="margin: 1rem;" />
   <div *ngIf="currentFileMetadata$ | async as currentFileMetadata">
-    <div class="d-flex justify-content-start mx-5 align-items-center">
+    <div class="d-flex justify-content-center mx-5 align-items-center">
       <button mat-stroked-button color="primary" class="action-button" (click)="downloadImage()">
-        Download
+        Download current image
       </button>
       <button mat-stroked-button color="primary" class="action-button" (click)="openMagnitudeDialog(currentFileMetadata.id)">
         Generate magnitude

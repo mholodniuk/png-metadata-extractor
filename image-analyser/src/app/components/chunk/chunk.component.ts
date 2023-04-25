@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Chunk, Properties } from 'src/app/models/PNGData';
 
-interface PLTE {
+type RGB = {
   red: number;
   green: number;
   blue: number;
@@ -15,7 +15,7 @@ interface PLTE {
 export class ChunkComponent implements OnInit {
   @Input()
   chunk: Chunk;
-  palette: PLTE[];
+  palette: RGB[];
   specialChunks = ['PLTE'];
   isHorizontal = false;
 
@@ -29,17 +29,20 @@ export class ChunkComponent implements OnInit {
     this.isHorizontal = !this.isHorizontal;
   }
 
-  displayRGB(color: PLTE) {
+  displayRGB(color: RGB) {
     return `RGB(${color.red}, ${color.green}, ${color.blue})`;
   }
 
-  isWhite(color: PLTE): boolean {
-    return color.red === 255 && color.green === 255 && color.blue === 255;
+  adjustStringColor(color: RGB): string {
+    if (color.red > 220 && color.green > 220 && color.blue > 220)
+      return 'black';
+    else
+      return "white";
   }
 
   readPLTE(props?: Properties): any {
     if (props == undefined) return [];
-    this.palette = props['Palette'] as PLTE[];
+    this.palette = props['Palette'] as RGB[];
   }
 
   formatMapToList(props?: Properties): [string, unknown][] {

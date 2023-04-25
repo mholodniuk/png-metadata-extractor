@@ -21,7 +21,7 @@
               <div *ngFor="let color of palette" 
                   [style.background-color]="'rgb(' + color.red + ',' + color.green + ',' + color.blue + ')'"
                   class="color-block">
-                <p *ngIf="isHorizontal" [style.color]="!isWhite(color) ? 'white' : 'black'">
+                <p *ngIf="isHorizontal" [ngStyle]="{ color : adjustStringColor(color) }">
                   {{ displayRGB(color) }}
                 </p>
               </div>

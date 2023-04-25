@@ -77,7 +77,7 @@ export class FileUploadComponent {
           url: url,
         }
       });
-    })
+    });
   }
 
   formatMapToList(props?: Properties): [string, unknown][] {

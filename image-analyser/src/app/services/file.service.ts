@@ -14,7 +14,6 @@ export class FileService {
   uploadFile(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);
-    // return of('mock')
     return this.http.post(`${this.apiUrl}`, formData, { responseType: 'text' });
   }
 
@@ -23,7 +22,6 @@ export class FileService {
   }
 
   removeSelectedChunks(id: string, chunks: string[]): Observable<object> {
-    console.log('receiced:' + chunks)
     return this.http.patch(`${this.apiUrl}/${id}`, {
         chunks: chunks,
       }
@@ -39,7 +37,6 @@ export class FileService {
   }
 
   getImageMetadata(id: string): Observable<PNGData> {
-    // return of(mockPNG);
     return this.http.get<PNGData>(`${this.apiUrl}/${id}/metadata`);
   }
 }

@@ -1,14 +1,22 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, concatMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  retry,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { PNGData } from 'src/app/models/PNGData';
 import { FileService } from 'src/app/services/file.service';
 import { initializeChunks } from 'src/app/utils/utils';
 
 interface MetadataState {
   metadata?: PNGData;
-  error?: string;
+  error?: number;
   chunksDetected: string[];
   chunksToDisplay: string[];
 }
@@ -18,8 +26,10 @@ export class MetadataStore extends ComponentStore<MetadataState> {
   readonly metadata$ = this.select((state) => state.metadata);
   readonly chunksDetected$ = this.select((state) => state.chunksDetected);
   readonly chunksToDisplay$ = this.select((state) => state.chunksToDisplay);
-  readonly notSelectedChunks$ = this.select((state) => 
-    state.chunksDetected.filter((chunk: string) => state.chunksToDisplay.indexOf(chunk) < 0)
+  readonly notSelectedChunks$ = this.select((state) =>
+    state.chunksDetected.filter(
+      (chunk: string) => state.chunksToDisplay.indexOf(chunk) < 0
+    )
   );
   readonly error$ = this.select((state) => state.error);
   readonly isChunkVisible$ = (chunk: string) =>
@@ -42,8 +52,10 @@ export class MetadataStore extends ComponentStore<MetadataState> {
     return file$.pipe(
       concatMap((file: File) => {
         return this.fileService.uploadFile(file).pipe(
+          retry(1),
           tap({
-            error: (error) => this.patchState({ error: error }),
+            error: (error: HttpErrorResponse) =>
+              this.patchState({ error: error.status }),
           }),
           switchMap((id) => this.fileService.getImageMetadata(id)),
           tap({
@@ -52,8 +64,10 @@ export class MetadataStore extends ComponentStore<MetadataState> {
                 metadata: metadata,
                 chunksDetected: initializeChunks(metadata),
                 chunksToDisplay: initializeChunks(metadata),
+                error: undefined,
               }),
-            error: (error) => this.patchState({ error: error }),
+            error: (error: HttpErrorResponse) =>
+              this.patchState({ error: error.status }),
           }),
           catchError(() => EMPTY)
         );
@@ -72,8 +86,10 @@ export class MetadataStore extends ComponentStore<MetadataState> {
                 metadata: metadata,
                 chunksDetected: initializeChunks(metadata),
                 chunksToDisplay: initializeChunks(metadata),
+                error: undefined,
               }),
-            error: (error) => this.patchState({ error: error }),
+            error: (error: HttpErrorResponse) =>
+              this.patchState({ error: error.status }),
           }),
           catchError(() => EMPTY)
         )
@@ -84,7 +100,7 @@ export class MetadataStore extends ComponentStore<MetadataState> {
   readonly removeNotSelectedChunks = this.effect((id$: Observable<string>) => {
     return id$.pipe(
       withLatestFrom(this.notSelectedChunks$),
-      concatMap(([id, chunks]) => 
+      concatMap(([id, chunks]) =>
         this.fileService.removeSelectedChunks(id, chunks).pipe(
           switchMap(() => this.fileService.getImageMetadata(id)),
           tap({
@@ -93,8 +109,10 @@ export class MetadataStore extends ComponentStore<MetadataState> {
                 metadata: metadata,
                 chunksDetected: initializeChunks(metadata),
                 chunksToDisplay: initializeChunks(metadata),
+                error: undefined,
               }),
-            error: (error) => this.patchState({ error: error }),
+            error: (error: HttpErrorResponse) =>
+              this.patchState({ error: error.status }),
           }),
           catchError(() => EMPTY)
         )
