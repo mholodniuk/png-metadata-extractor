@@ -11,7 +11,7 @@ import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.repository.ImageRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -24,7 +24,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
     private final ImageMetadataParser parser;

@@ -3,13 +3,13 @@ package com.dev.imageprocessingapi.metadataextractor.logic;
 import com.dev.imageprocessingapi.exception.InvalidChunkDeletionException;
 import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 import com.dev.imageprocessingapi.model.Image;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ImageManipulator {
     private final List<String> criticalChunks = List.of("IHDR", "PLTE", "IDAT", "IEND");
     private final ImageMetadataParser parser;

@@ -5,8 +5,7 @@ import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
 import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +13,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-/*
- * TODO: extra features
- *  - file list
- *  - thumbnail generator (as aspect for upload or batch action)
- */
-
 @Validated
 @RestController
 @RequestMapping("/images")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ImageController {
     private final ImageService imageService;
 

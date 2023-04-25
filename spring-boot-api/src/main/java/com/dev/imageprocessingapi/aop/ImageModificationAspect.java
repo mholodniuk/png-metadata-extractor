@@ -36,7 +36,7 @@ public class ImageModificationAspect {
                         LocalDateTime currentDate = LocalDateTime.now();
                         log.info("Found tIME chunk. Changing last modified to: " + currentDate);
                         List<String> modificationDateBytes = convertCurrentDateToBytes(currentDate);
-                        chunk = new RawChunk(chunk.type(), chunk.length(), modificationDateBytes, chunk.CRC());
+                        chunk = new RawChunk(chunk.type(), chunk.length(), chunk.offset(), modificationDateBytes, chunk.CRC());
                     }
                     modifiedChunks.add(chunk);
                 }

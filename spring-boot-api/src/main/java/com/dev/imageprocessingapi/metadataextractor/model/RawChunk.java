@@ -4,6 +4,7 @@ import java.util.List;
 
 public record RawChunk(String type,
                        int length,
+                       int offset,
                        List<String> rawBytes,
                        String CRC
                     ) {
