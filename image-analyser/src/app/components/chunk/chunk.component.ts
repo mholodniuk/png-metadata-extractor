@@ -17,7 +17,7 @@ export class ChunkComponent implements OnInit {
   chunk: Chunk;
   palette: PLTE[];
   specialChunks = ['PLTE'];
-  isVertical = false;
+  isHorizontal = false;
 
   ngOnInit(): void {
     if (this.chunk.type === 'PLTE') {
@@ -26,7 +26,15 @@ export class ChunkComponent implements OnInit {
   }
 
   toggleVerticalHorizontal(): void {
-    this.isVertical = !this.isVertical;
+    this.isHorizontal = !this.isHorizontal;
+  }
+
+  displayRGB(color: PLTE) {
+    return `RGB(${color.red}, ${color.green}, ${color.blue})`;
+  }
+
+  isWhite(color: PLTE): boolean {
+    return color.red === 255 && color.green === 255 && color.blue === 255;
   }
 
   readPLTE(props?: Properties): any {

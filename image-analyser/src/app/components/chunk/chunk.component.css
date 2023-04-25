@@ -9,9 +9,21 @@
 .color-block {
   width: 90%;
   height: 40px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: auto;
+  position: relative;
 }
+
+.color-block p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
 .palette-container {
   margin: 2rem 0;
 }
