@@ -1,5 +1,8 @@
 ## Building everything from `docker-compose.yml`
 
+### todo
+- gray images fail to generate fft (???)
+
 Building backend
 ```
 cd spring-boot-api
