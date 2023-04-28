@@ -34,10 +34,7 @@ export class ChunkComponent implements OnInit {
   }
 
   adjustStringColor(color: RGB): string {
-    if (color.red > 220 && color.green > 220 && color.blue > 220)
-      return 'black';
-    else
-      return "white";
+    return (color.red > 220 && color.green > 220 && color.blue > 220) ? 'black' : 'white'
   }
 
   readPLTE(props?: Properties): any {

@@ -14,6 +14,7 @@ export class FileService {
   uploadFile(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);
+    // return of('mock')
     return this.http.post(`${this.apiUrl}`, formData, { responseType: 'text' });
   }
 
@@ -37,6 +38,7 @@ export class FileService {
   }
 
   getImageMetadata(id: string): Observable<PNGData> {
+    // return of(mockPNG);
     return this.http.get<PNGData>(`${this.apiUrl}/${id}/metadata`);
   }
 }

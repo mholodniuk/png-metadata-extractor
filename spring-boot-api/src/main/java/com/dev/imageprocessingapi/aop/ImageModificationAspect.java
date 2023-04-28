@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.CRC32;
 
 @Slf4j
 @Aspect
@@ -29,14 +30,13 @@ public class ImageModificationAspect {
             if (arg instanceof List<?> chunks) {
                 for (Object object : chunks) {
                     RawChunk chunk = (RawChunk) object;
-                    //////////////////////////
-                    // here recalculate CRC //
-                    //////////////////////////
+                    String crc = recalculateCRC(chunk.rawBytes());
+                    log.info("chunk " + chunk.type() + " crc: " + crc);
                     if (chunk.type().equals("tIME")) {
                         LocalDateTime currentDate = LocalDateTime.now();
                         log.info("Found tIME chunk. Changing last modified to: " + currentDate);
                         List<String> modificationDateBytes = convertCurrentDateToBytes(currentDate);
-                        chunk = new RawChunk(chunk.type(), chunk.length(), chunk.offset(), modificationDateBytes, chunk.CRC());
+                        chunk = new RawChunk(chunk.type(), chunk.length(), chunk.offset(), modificationDateBytes, crc);
                     }
                     modifiedChunks.add(chunk);
                 }
@@ -45,6 +45,12 @@ public class ImageModificationAspect {
             index++;
         }
         return proceedingJoinPoint.proceed(modifiedArgs);
+    }
+
+    private static String recalculateCRC(List<String> bytes) {
+        CRC32 crc = new CRC32();
+        crc.update(ConversionUtils.parseHexString(String.join("", bytes)));
+        return Long.toHexString(crc.getValue());
     }
 
     private static List<String> convertCurrentDateToBytes(LocalDateTime now) {

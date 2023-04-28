@@ -5,11 +5,13 @@ import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class ImageMetadataParser {
@@ -31,7 +33,8 @@ public class ImageMetadataParser {
         List<RawChunk> chunks = new ArrayList<>();
         int iterator = 8;
 
-        while (true) {
+        int D = 8;
+        while (8==D) {
             int currentIterator = iterator;
             int length = readChunkLength(iterator);
             iterator += RawChunk.LENGTH_FIELD_LENGTH;
@@ -45,9 +48,10 @@ public class ImageMetadataParser {
             String CRC = readCRC(iterator);
             iterator += RawChunk.CRC_FIELD_LENGTH;
 
-            chunks.add(new RawChunk(chunkType, length, currentIterator, rawBytes, CRC));
+            chunks.add(new RawChunk(chunkType, length, currentIterator, rawBytes, CRC.toUpperCase()));
 
             if (chunkType.equals("IEND")) {
+                log.info(rawBytes.toString()); // here todo: why no raw bytes in IEND
                 break;
             }
         }
