@@ -30,7 +30,7 @@ public class ImageModificationAspect {
             if (arg instanceof List<?> chunks) {
                 for (Object object : chunks) {
                     RawChunk chunk = (RawChunk) object;
-                    String crc = recalculateCRC(chunk.rawBytes());
+                    String crc = recalculateCRC(chunk.rawBytes(), chunk.type());
                     log.info("chunk " + chunk.type() + " crc: " + crc);
                     if (chunk.type().equals("tIME")) {
                         LocalDateTime currentDate = LocalDateTime.now();
@@ -47,9 +47,9 @@ public class ImageModificationAspect {
         return proceedingJoinPoint.proceed(modifiedArgs);
     }
 
-    private static String recalculateCRC(List<String> bytes) {
+    private static String recalculateCRC(List<String> bytes, String type) {
         CRC32 crc = new CRC32();
-        crc.update(ConversionUtils.parseHexString(String.join("", bytes)));
+        crc.update(ConversionUtils.parseHexString(type + String.join("", bytes)));
         return Long.toHexString(crc.getValue());
     }
 
