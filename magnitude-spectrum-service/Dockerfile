@@ -19,4 +19,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY receiver.py .
 
-CMD ["python", "receiver.py"]
+CMD ["python", "FFTgenerator.py"]

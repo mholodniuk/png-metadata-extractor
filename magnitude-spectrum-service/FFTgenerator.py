@@ -6,7 +6,7 @@ import cv2 as cv
 import numpy as np
 from pymongo import MongoClient
 
-# todo: move to environment variables
+
 EXCHANGE_NAME = 'image_to_convert_exchange'
 QUEUE_NAME = 'image_to_convert_queue'
 ROUTING_KEY = 'routing-key-fft'
@@ -52,6 +52,8 @@ class rabbitMQServer():
     @staticmethod
     def callback(channel, method, properties, body, mongo_collection):
         logging.info(f'Consumed message {body.decode()} from queue')
+        logging.info(f'Channel {channel}')
+        
         id = body.decode('utf-8')
         document = mongo_collection.find_one({'_id': ObjectId(id)})
 
