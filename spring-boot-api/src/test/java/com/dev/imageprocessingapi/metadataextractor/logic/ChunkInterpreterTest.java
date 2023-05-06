@@ -8,7 +8,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChunkInterpreterTest {
-
     @Test
     public void testGetFirstAndLastStrings() {
         List<String> input = Arrays.asList("aa", "bb", "cc", "dd");
