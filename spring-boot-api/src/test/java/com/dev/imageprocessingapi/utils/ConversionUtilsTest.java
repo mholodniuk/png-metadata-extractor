@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi;
+package com.dev.imageprocessingapi.utils;
 
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import org.junit.jupiter.api.Assertions;

@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi;
+package com.dev.imageprocessingapi.utils;
 
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import org.junit.jupiter.api.Assertions;
@@ -12,9 +12,9 @@ public class CRCTests {
     void crcTest() {
         String expectedCRC = "7419f340";
         List<String> bytes = List.of(
-                "49", "48", "44",
-                "52", "00", "00", "04", "86", "00", "00", "03", "ED",
-                "08", "02", "00", "00", "00");
+                "49", "48", "44", "52",
+                "00", "00", "04", "86", "00", "00",
+                "03", "ED", "08", "02", "00", "00", "00");
 
         CRC32 crc = new CRC32();
         crc.update(ConversionUtils.parseHexString(String.join("", bytes)));

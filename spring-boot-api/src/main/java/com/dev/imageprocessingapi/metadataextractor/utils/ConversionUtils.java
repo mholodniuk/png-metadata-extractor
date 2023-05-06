@@ -3,6 +3,8 @@ package com.dev.imageprocessingapi.metadataextractor.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HexFormat;
+import java.util.List;
+import java.util.zip.CRC32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -72,5 +74,11 @@ public class ConversionUtils {
         } finally {
             inflater.end();
         }
+    }
+
+    public static String calculateCRC(List<String> bytes, String type) {
+        CRC32 crc = new CRC32();
+        crc.update(ConversionUtils.parseHexString(ConversionUtils.convertSimpleStringToHexString(type) + String.join("", bytes)));
+        return Long.toHexString(crc.getValue()).toUpperCase();
     }
 }

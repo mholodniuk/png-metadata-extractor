@@ -51,7 +51,6 @@ public class ImageMetadataParser {
             chunks.add(new RawChunk(chunkType, length, currentIterator, rawBytes, CRC.toUpperCase()));
 
             if (chunkType.equals("IEND")) {
-                log.info(rawBytes.toString()); // here todo: why no raw bytes in IEND
                 break;
             }
         }
