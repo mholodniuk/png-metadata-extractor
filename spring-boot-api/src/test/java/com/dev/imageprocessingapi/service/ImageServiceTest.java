@@ -1,6 +1,5 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.MongoTestContainer;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
@@ -19,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,8 +30,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
-public class ImageServiceTest extends MongoTestContainer {
+
+@SpringJUnitConfig(classes = {ImageService.class})
+public class ImageServiceTest {
     private static final String mockId = "644d739d981447205ec6f809";
     @MockBean
     private ImageRepository imageRepository;
