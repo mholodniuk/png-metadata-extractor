@@ -30,6 +30,9 @@
               Toggle view
             </button>
           </ng-container>
+          <ng-container *ngSwitchCase="'tIME'">
+            <p style="font-size: large; margin-top: 0.5rem;">Last modified at: {{readtIME(chunk.properties)}}</p>
+          </ng-container>
           <ng-container *ngSwitchDefault>
             <mat-list role="list"> 
               <mat-list-item *ngFor="let property of formatMapToList(chunk.properties)" role="listitem">

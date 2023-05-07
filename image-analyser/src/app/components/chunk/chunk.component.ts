@@ -5,7 +5,7 @@ type RGB = {
   red: number;
   green: number;
   blue: number;
-}
+};
 
 @Component({
   selector: 'chunk',
@@ -34,12 +34,24 @@ export class ChunkComponent implements OnInit {
   }
 
   adjustStringColor(color: RGB): string {
-    return (color.red > 220 && color.green > 220 && color.blue > 220) ? 'black' : 'white'
+    return color.red > 220 && color.green > 220 && color.blue > 220
+      ? 'black'
+      : 'white';
   }
 
   readPLTE(props?: Properties): any {
     if (props == undefined) return [];
     this.palette = props['Palette'] as RGB[];
+  }
+
+  readtIME(properties: Properties): string {
+    const day = properties['Day'];
+    const month = properties['Month'];
+    const year = properties['Year'];
+    const hour = properties['Hour'];
+    const minute = properties['Minute'];
+    const second = properties['Second'];
+    return `${day}.${month}.${year} ${hour}:${minute}:${second}`;
   }
 
   formatMapToList(props?: Properties): [string, unknown][] {
