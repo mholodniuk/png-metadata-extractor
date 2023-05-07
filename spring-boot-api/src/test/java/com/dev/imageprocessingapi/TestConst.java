@@ -4,7 +4,7 @@ import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 
 import java.util.List;
 
-public interface TestUtils {
+public interface TestConst {
     List<RawChunk> MOCK_CHUNKS =
             List.of(
                     new RawChunk("IHDR", 4, 4, List.of("00", "00", "00"), "c1"),

@@ -8,7 +8,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.ByteArrayOutputStream;
 
-import static com.dev.imageprocessingapi.TestUtils.MOCK_CHUNKS;
+import static com.dev.imageprocessingapi.TestConst.MOCK_CHUNKS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

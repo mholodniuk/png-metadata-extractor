@@ -11,7 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
 
-import static com.dev.imageprocessingapi.TestUtils.*;
+import static com.dev.imageprocessingapi.TestConst.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
