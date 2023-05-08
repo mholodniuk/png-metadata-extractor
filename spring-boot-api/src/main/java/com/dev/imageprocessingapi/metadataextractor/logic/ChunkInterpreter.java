@@ -55,6 +55,7 @@ public class ChunkInterpreter {
             case "tEXt" -> new tEXtAnalyser();
             case "zTXt" -> new zTXtAnalyser();
             case "pHYs" -> new pHYsAnalyser();
+            case "cHRM" -> new cHRMAnalyser();
             default -> null;
         };
     }
