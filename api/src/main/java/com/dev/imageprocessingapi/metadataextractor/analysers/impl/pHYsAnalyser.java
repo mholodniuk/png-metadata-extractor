@@ -25,7 +25,7 @@ public class pHYsAnalyser implements Analyser {
         result.put("Pixels per unit Y", pixelsPerUnitY);
 
         int unitSpecifier = getIntValue(rawBytes, 1);
-        result.put("UnitSpecifier", unitSpecifier);
+        result.put("Unit specifier", unitSpecifier);
 
         return result;
     }

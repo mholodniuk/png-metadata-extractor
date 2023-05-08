@@ -17,7 +17,7 @@ public class pHYsAnalyserTest {
         Map<String, Object> expected = Map.of(
                 "Pixels per unit Y", 2835,
                 "Pixels per unit X", 2835,
-                "UnitSpecifier", 1);
+                "Unit specifier", 1);
 
         Map<String, Object> result = analyser.analyse(rawBytes);
 
