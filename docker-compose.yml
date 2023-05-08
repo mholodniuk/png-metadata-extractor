@@ -1,9 +1,9 @@
 version: "3"
 services:
   api:
-    container_name: spring
+    container_name: api
     hostname: spring
-    build: ./spring-boot-api
+    build: ./api
     restart: always
     ports:
       - 8080:8080
@@ -12,17 +12,17 @@ services:
       - rabbit
       - magnitude-service
   magnitude-service:
-    container_name: magnitude-service
+    container_name: fft-service
     build: 
-      context: ./magnitude-spectrum-service
+      context: ./fft-service
       dockerfile: Dockerfile
     restart: always
     depends_on:
       - mongo
       - rabbit
   frontend:
-    container_name: angular
-    build: ./image-analyser
+    container_name: frontend
+    build: ./frontend
     restart: always
     ports:
       - 4200:80
