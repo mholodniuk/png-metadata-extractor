@@ -11,13 +11,21 @@ import { MatListModule } from '@angular/material/list';
 import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { ChunkComponent } from './components/chunk/chunk.component';
 import { MagnitudeDialogComponent } from './components/magnitude-dialog/magnitude-dialog.component';
+import { ErrorSnackbarComponent } from './components/error-snackbar/error-snackbar.component';
 
 @NgModule({
-  declarations: [AppComponent, FileUploadComponent, ChunkComponent, MagnitudeDialogComponent],
+  declarations: [
+    AppComponent,
+    FileUploadComponent,
+    ChunkComponent,
+    MagnitudeDialogComponent,
+    ErrorSnackbarComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -28,7 +36,8 @@ import { MagnitudeDialogComponent } from './components/magnitude-dialog/magnitud
     MatTabsModule,
     MatListModule,
     MatChipsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   bootstrap: [AppComponent],
 })
