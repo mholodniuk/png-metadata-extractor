@@ -8,28 +8,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class tIMEAnalyser implements Analyser {
+public class pHYsAnalyser implements Analyser {
     private int iterator = 0;
-
     @Override
     public Map<String, Object> analyse(List<String> rawBytes) {
-        if (rawBytes.size() != 7) {
-            throw new IllegalArgumentException("tIME chunk should contain 7 bytes of data");
+        if (rawBytes.size() != 9) {
+            throw new IllegalArgumentException("pHYs chunk should contain 9 bytes of data");
         }
+
         var result = new HashMap<String, Object>();
 
-        int year = getIntValue(rawBytes, 2);
-        result.put("Year", year);
-        int Month = getIntValue(rawBytes, 1);
-        result.put("Month", Month);
-        int day = getIntValue(rawBytes, 1);
-        result.put("Day", day);
-        int hour = getIntValue(rawBytes, 1);
-        result.put("Hour", hour);
-        int minute = getIntValue(rawBytes, 1);
-        result.put("Minute", minute);
-        int second = getIntValue(rawBytes, 1);
-        result.put("Second", second);
+        int pixelsPerUnitX = getIntValue(rawBytes, 4);
+        result.put("Pixels per unit X", pixelsPerUnitX);
+
+        int pixelsPerUnitY = getIntValue(rawBytes, 4);
+        result.put("Pixels per unit Y", pixelsPerUnitY);
+
+        int unitSpecifier = getIntValue(rawBytes, 1);
+        result.put("UnitSpecifier", unitSpecifier);
 
         return result;
     }
@@ -37,7 +33,7 @@ public class tIMEAnalyser implements Analyser {
     private int getIntValue(List<String> rawBytes, int size) {
         var hex = rawBytes.stream().skip(iterator).limit(size).collect(Collectors.joining());
         iterator += size;
-
         return ConversionUtils.fromHexDigits(hex);
     }
 }
+

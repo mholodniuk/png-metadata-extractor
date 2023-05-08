@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class IHDRAnalyser implements Analyser {
-    private Integer iterator = 0;
+    private int iterator = 0;
     @Override
     public Map<String, Object> analyse(List<String> rawBytes) {
         var result = new HashMap<String, Object>();
