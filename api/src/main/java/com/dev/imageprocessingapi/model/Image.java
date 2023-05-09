@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
 @Data
-@Document(collation = "images")
+@Document(collection = "images")
 public class Image {
     @Id
     @Field(targetType = FieldType.OBJECT_ID)
