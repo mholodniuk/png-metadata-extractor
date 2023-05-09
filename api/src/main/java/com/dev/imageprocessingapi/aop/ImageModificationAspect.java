@@ -23,7 +23,8 @@ import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils
 public class ImageModificationAspect {
     @Around("execution(* com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer.saveAsPNG(..))")
     public Object updateLastModifiedMetadata(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        int index = 0;
+        int index = 0, currentOffset = 0, previousLength = 0;
+        boolean isFirst = true;
         Object[] modifiedArgs = proceedingJoinPoint.getArgs();
         List<RawChunk> modifiedChunks = new ArrayList<>();
 
@@ -31,12 +32,18 @@ public class ImageModificationAspect {
             if (arg instanceof List<?> chunks) {
                 for (Object object : chunks) {
                     RawChunk chunk = (RawChunk) object;
+                    currentOffset = isFirst ? chunk.offset() : currentOffset + previousLength;
+                    previousLength = chunk.length();
+                    isFirst = false;
+
                     if (chunk.type().equals("tIME")) {
                         LocalDateTime currentDate = LocalDateTime.now();
                         log.info("Found tIME chunk. Changing last modified to: " + currentDate);
                         List<String> modificationDateBytes = convertCurrentDateToBytes(currentDate);
                         String crc = calculateCRC(modificationDateBytes, chunk.type());
-                        chunk = new RawChunk(chunk.type(), chunk.length(), chunk.offset(), modificationDateBytes, crc);
+                        chunk = new RawChunk(chunk.type(), chunk.length(), currentOffset, modificationDateBytes, crc);
+                    } else {
+                        chunk = new RawChunk(chunk.type(), chunk.length(), currentOffset, chunk.rawBytes(), chunk.CRC());
                     }
                     modifiedChunks.add(chunk);
                 }

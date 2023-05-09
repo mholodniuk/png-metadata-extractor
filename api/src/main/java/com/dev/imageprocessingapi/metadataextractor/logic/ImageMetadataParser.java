@@ -31,11 +31,10 @@ public class ImageMetadataParser {
         validateHeader(headerToCheck);
 
         List<RawChunk> chunks = new ArrayList<>();
-        int iterator = 8;
+        int iterator = 8, currentOffset = 8;
 
         int D = 8;
-        while (8==D) {
-            int currentIterator = iterator;
+        while (8 == D) {
             int length = readChunkLength(iterator);
             iterator += RawChunk.LENGTH_FIELD_LENGTH;
 
@@ -48,7 +47,8 @@ public class ImageMetadataParser {
             String CRC = readCRC(iterator);
             iterator += RawChunk.CRC_FIELD_LENGTH;
 
-            chunks.add(new RawChunk(chunkType, length, currentIterator, rawBytes, CRC.toUpperCase()));
+            chunks.add(new RawChunk(chunkType, length, currentOffset, rawBytes, CRC.toUpperCase()));
+            currentOffset = currentOffset + length;
 
             if (chunkType.equals("IEND")) {
                 break;
