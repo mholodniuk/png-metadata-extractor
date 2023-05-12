@@ -1,6 +1,5 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.MongoTestContainer;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
@@ -21,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -148,7 +146,6 @@ public class ImageServiceTest {
 
         then(manipulator).should().removeGivenChunks(image, chunksToDelete.chunks());
         then(manipulator).should(never()).removeAncillaryChunks(any());
-
     }
 
     @Test

@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class tEXtAnalyserTest {
-    tEXtAnalyser analyser = new tEXtAnalyser();
+    private final tEXtAnalyser analyser = new tEXtAnalyser();
 
     @Test
     public void testAnalyse() {

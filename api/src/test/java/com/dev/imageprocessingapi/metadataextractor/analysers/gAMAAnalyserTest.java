@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class gAMAAnalyserTest {
-    gAMAAnalyser analyser = new gAMAAnalyser();
+    private final gAMAAnalyser analyser = new gAMAAnalyser();
 
     @Test
     public void testSimpleAnalyse() {

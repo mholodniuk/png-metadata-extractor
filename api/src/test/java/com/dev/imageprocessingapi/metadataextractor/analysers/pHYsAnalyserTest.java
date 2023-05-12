@@ -9,7 +9,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class pHYsAnalyserTest {
-    pHYsAnalyser analyser = new pHYsAnalyser();
+    private final pHYsAnalyser analyser = new pHYsAnalyser();
 
     @Test
     public void testSimpleAnalyse() {

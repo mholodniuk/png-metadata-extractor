@@ -1,6 +1,7 @@
 package com.dev.imageprocessingapi.metadataextractor.analysers;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.tIMEAnalyser;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class tIMEAnalyserTest {
-    tIMEAnalyser analyser = new tIMEAnalyser();
+    private final tIMEAnalyser analyser = new tIMEAnalyser();
 
     @Test
     public void testAnalyse() {
@@ -27,5 +28,15 @@ public class tIMEAnalyserTest {
         Map<String, Object> properties = analyser.analyse(rawBytes);
 
         assertEquals(expectedProperties, properties);
+    }
+
+    @Test
+    void testInvalidData() {
+        List<String> rawBytes = Arrays.asList(
+                "00", "00", "6d", "98", "00", "00", "73", "8e"
+        );
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> analyser.analyse(rawBytes));
     }
 }

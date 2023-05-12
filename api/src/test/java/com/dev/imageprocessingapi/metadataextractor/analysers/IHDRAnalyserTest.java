@@ -9,7 +9,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IHDRAnalyserTest {
-    IHDRAnalyser analyser = new IHDRAnalyser();
+    private final IHDRAnalyser analyser = new IHDRAnalyser();
 
     @Test
     void testAnalyse() {
