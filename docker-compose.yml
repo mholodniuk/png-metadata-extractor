@@ -13,7 +13,7 @@ services:
       - magnitude-service
   magnitude-service:
     container_name: fft-service
-    build: 
+    build:
       context: ./fft-service
       dockerfile: Dockerfile
     restart: always
@@ -32,8 +32,13 @@ services:
     container_name: rabbit
     image: rabbitmq:3.6-management-alpine
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 5672:5672
+      - 15672:15672
+    # healthcheck:
+    #   test: rabbitmq-diagnostics check_port_connectivity
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
   mongo:
     container_name: mongo
     hostname: mongo
