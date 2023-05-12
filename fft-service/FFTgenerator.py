@@ -12,8 +12,8 @@ QUEUE_NAME = 'image_to_convert_queue'
 ROUTING_KEY = 'routing-key-fft'
 HOSTNAME = 'rabbit'
 MONGO_URI = 'mongodb://mongo:27017'
-DATABASE_NAME = 'mongo-test'
-COLLECTION_NAME = 'image'
+DATABASE_NAME = 'png'
+COLLECTION_NAME = 'images'
 
 class rabbitMQServer():
     def __init__(self, queue, host, routing_key, mongo_uri, exchange=''):
@@ -52,7 +52,6 @@ class rabbitMQServer():
     @staticmethod
     def callback(channel, method, properties, body, mongo_collection):
         logging.info(f'Consumed message {body.decode()} from queue')
-        logging.info(f'Channel {channel}')
         
         id = body.decode('utf-8')
         document = mongo_collection.find_one({'_id': ObjectId(id)})
@@ -91,7 +90,7 @@ class rabbitMQServer():
             self._channel.start_consuming()
             logging.info("Server finished")
         except Exception as e:
-            logging.debug(f'Exception: {e}')
+            logging.error(f'Exception {e.with_traceback()}')
 
 
 if __name__ == '__main__':
