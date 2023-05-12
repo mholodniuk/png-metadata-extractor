@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.MongoTestContainer;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +55,7 @@ public class ImageServiceTest {
         var imageToInsert = new Image();
         imageToInsert.setFileName(file.getOriginalFilename());
         imageToInsert.setFileType(file.getContentType());
+        imageToInsert.setCreatedAt(any());
         imageToInsert.setBytes(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
         var insertedImage = new Image();
         insertedImage.setId(mockId);
