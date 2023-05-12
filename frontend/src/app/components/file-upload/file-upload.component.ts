@@ -46,7 +46,7 @@ export class FileUploadComponent implements OnInit {
   getErrorMessageForCode(code: number): string {
     switch (code) {
       case 400:
-        return 'Bad file';
+        return 'Incorrect operation';
       case 404:
         return 'File not found';
       case 500:
