@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +38,7 @@ public class ImageService {
         var image = new Image();
         image.setFileName(file.getOriginalFilename());
         image.setFileType(file.getContentType());
+        image.setCreatedAt(LocalDateTime.now());
         image.setBytes(new Binary(BsonBinarySubType.BINARY, bytes));
 
         image = imageRepository.insert(image);
