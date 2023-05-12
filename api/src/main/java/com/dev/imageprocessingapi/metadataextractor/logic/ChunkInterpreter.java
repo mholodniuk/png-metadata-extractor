@@ -56,6 +56,7 @@ public class ChunkInterpreter {
             case "zTXt" -> new zTXtAnalyser();
             case "pHYs" -> new pHYsAnalyser();
             case "cHRM" -> new cHRMAnalyser();
+            case "bKGD" -> new bKGDAnalyser((int) IHDRInfo.get("Color type"));
             default -> null;
         };
     }
