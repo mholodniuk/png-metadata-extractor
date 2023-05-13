@@ -22,9 +22,11 @@ pipeline {
             }
         }
 
-        stage('Build frontend') {
-            dir('api') {
-                sh "npm run build"
+        stage('Build frontend') { 
+            steps {
+                dir('api') {
+                    sh "npm run build"
+                }
             }
         }
 
