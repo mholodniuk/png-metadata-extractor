@@ -33,8 +33,7 @@ public class ImageMetadataParser {
         List<RawChunk> chunks = new ArrayList<>();
         int iterator = 8;
 
-        int D = 8;
-        while (8 == D) {
+        while (true) {
             int currentIterator = iterator;
             int length = readChunkLength(iterator);
             iterator += RawChunk.LENGTH_FIELD_LENGTH;

@@ -2,19 +2,17 @@ package com.dev.imageprocessingapi.metadataextractor.analysers.impl;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
+import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class bKGDAnalyser implements Analyser {
     private final int colorType;
     private int iterator;
-
-    public bKGDAnalyser(int colorType) {
-        this.colorType = colorType;
-    }
 
     @Override
     public Map<String, Object> analyse(List<String> rawBytes) {
