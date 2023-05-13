@@ -4,7 +4,7 @@ pipeline {
     tools {
         maven 'M3'
         jdk 'jdk-17'
-        nodejs 'node'
+        // nodejs 'node'
     }
 
     stages {
@@ -24,18 +24,12 @@ pipeline {
             }
         }
 
-        stage('Build frontend') { 
-            steps {
-                dir('api') {
-                    sh "npm run build"
-                }
-            }
-        }
-
-        stage('Run') {
-            steps {
-                sh "docker-compose up -d"
-            }
-        }
+        // stage('Build frontend') { 
+        //     steps {
+        //         dir('api') {
+        //             sh "npm run build"
+        //         }
+        //     }
+        // }
     }
 }
