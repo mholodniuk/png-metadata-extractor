@@ -13,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @Validated
 @RestController
 @RequestMapping("/images")
@@ -38,6 +40,12 @@ public class ImageController {
         var image = imageService.getImage(id);
 
         return ResponseEntityUtils.createResponseEntity(image, false);
+    }
+
+    @GetMapping("/{id}/validate")
+    public ResponseEntity<Map<String, Boolean>> validateCRC(@PathVariable @MongoObjectId String id) {
+        return ResponseEntity.ok()
+                .body(imageService.validateImage(id));
     }
 
     @GetMapping("/{id}/magnitude")

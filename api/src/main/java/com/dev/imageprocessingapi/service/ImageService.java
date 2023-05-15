@@ -3,6 +3,7 @@ package com.dev.imageprocessingapi.service;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
+import com.dev.imageprocessingapi.metadataextractor.logic.ChunkValidator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -31,6 +33,7 @@ public class ImageService {
     private final ImageMetadataParser parser;
     private final ImageSerializer serializer;
     private final ImageManipulator manipulator;
+    private final ChunkValidator validator;
 
     public String addImage(MultipartFile file) {
         byte[] bytes = validateAndRetrieveBytes(file);
@@ -84,6 +87,13 @@ public class ImageService {
             throw new MagnitudeNotGeneratedException();
 
         return image;
+    }
+
+    public Map<String, Boolean> validateImage(String id) {
+        var image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        return validator.validate(image);
     }
 
     public void removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
