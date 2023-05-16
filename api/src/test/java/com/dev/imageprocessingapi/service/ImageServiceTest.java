@@ -3,6 +3,7 @@ package com.dev.imageprocessingapi.service;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
+import com.dev.imageprocessingapi.metadataextractor.logic.ChunkValidator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
@@ -42,6 +43,8 @@ public class ImageServiceTest {
     private ImageSerializer serializer;
     @MockBean
     private ImageManipulator manipulator;
+    @MockBean
+    private ChunkValidator validator;
     @Autowired
     private ImageService imageService;
 
