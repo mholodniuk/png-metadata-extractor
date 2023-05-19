@@ -12,7 +12,7 @@ public class gAMAAnalyser implements Analyser {
         var result = new HashMap<String, Object>();
 
         int gamma = ConversionUtils.fromHexDigits(ConversionUtils.formatHex(rawBytes));
-        result.put("Gamma", (double) gamma / 100000);
+        result.put("Gamma", (double) gamma / 100_000);
 
         return result;
     }

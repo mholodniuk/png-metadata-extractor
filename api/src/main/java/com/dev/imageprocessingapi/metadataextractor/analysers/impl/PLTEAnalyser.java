@@ -1,7 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.analysers.impl;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
-import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -21,9 +20,9 @@ public class PLTEAnalyser implements Analyser {
         var result = new HashMap<String, Object>();
         List<Color> palette = new ArrayList<>();
         for (int i = 0; i < rawBytes.length; i += 3) {
-            int red = ConversionUtils.fromHexDigits(ConversionUtils.toHexDigits(rawBytes[i]));
-            int green = ConversionUtils.fromHexDigits(ConversionUtils.toHexDigits(rawBytes[i + 1]));
-            int blue = ConversionUtils.fromHexDigits(ConversionUtils.toHexDigits(rawBytes[i + 2]));
+            int red = Byte.toUnsignedInt(rawBytes[i]);
+            int green = Byte.toUnsignedInt(rawBytes[i + 1]);
+            int blue = Byte.toUnsignedInt(rawBytes[i + 2]);
             palette.add(new Color(red, green, blue));
         }
         result.put("Number of entries", palette.size());
