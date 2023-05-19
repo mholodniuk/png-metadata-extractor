@@ -4,15 +4,14 @@ import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class tEXtAnalyser implements Analyser {
     @Override
-    public Map<String, Object> analyse(List<String> rawBytes) {
+    public Map<String, Object> analyse(byte[] rawBytes) {
         var result = new HashMap<String, Object>();
 
-        var textualData = String.join("", rawBytes);
+        var textualData = ConversionUtils.formatHex(rawBytes);
         var data = ConversionUtils.convertHexStringToSimpleString(textualData);
         int separatorIndex = data.indexOf("\0");
 

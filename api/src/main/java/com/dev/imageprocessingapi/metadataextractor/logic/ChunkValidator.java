@@ -1,6 +1,7 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.metadataextractor.model.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class ChunkValidator {
 
         for (Chunk chunk : metadata.chunks()) {
             var crc = chunk.CRC();
-            var recalculatedCRC = calculateCRC(chunk.rawBytes(), chunk.type());
+            var recalculatedCRC = calculateCRC(ConversionUtils.parseHex(String.join("", chunk.rawBytes())), chunk.type());
             result.put(chunk.type(), crc.equals(recalculatedCRC));
         }
 

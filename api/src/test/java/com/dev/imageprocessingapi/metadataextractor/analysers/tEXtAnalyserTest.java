@@ -20,11 +20,16 @@ public class tEXtAnalyserTest {
                 "20", "49", "6d", "61", "67", "65", "52",
                 "65", "61", "64", "79");
 
+        byte[] byteArray = new byte[rawBytes.size()];
+        for (int i = 0; i < rawBytes.size(); i++) {
+            byteArray[i] = (byte) Integer.parseInt(rawBytes.get(i), 16);
+        }
+
         Map<String, Object> expectedProperties = Map.of(
                 "Keyword", "Software",
                 "Text string", "Adobe ImageReady");
 
-        Map<String, Object> properties = analyser.analyse(rawBytes);
+        Map<String, Object> properties = analyser.analyse(byteArray);
 
         assertEquals(expectedProperties, properties);
     }

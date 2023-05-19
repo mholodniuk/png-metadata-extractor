@@ -2,7 +2,6 @@ package com.dev.imageprocessingapi.aop;
 
 
 import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
-import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -35,12 +34,13 @@ public class ImageModificationAspect {
                     if (chunk.type().equals("tIME")) {
                         LocalDateTime currentDate = LocalDateTime.now();
                         log.info("Found tIME chunk. Changing last modified to: " + currentDate);
-                        List<String> modificationDateBytes = convertCurrentDateToBytes(currentDate);
+                        byte[] modificationDateBytes = convertCurrentDateToBytes(currentDate);
                         String crc = calculateCRC(modificationDateBytes, chunk.type());
                         chunk = new RawChunk(chunk.type(), chunk.length(), chunk.offset(), modificationDateBytes, crc);
                     }
                     modifiedChunks.add(chunk);
                 }
+                // todo: add tIME chunk even if there wasn't one before
                 modifiedArgs[index] = modifiedChunks;
             }
             index++;
@@ -48,14 +48,8 @@ public class ImageModificationAspect {
         return proceedingJoinPoint.proceed(modifiedArgs);
     }
 
-    private static List<String> convertCurrentDateToBytes(LocalDateTime now) {
+    private static byte[] convertCurrentDateToBytes(LocalDateTime now) {
         byte[] yearBytes = new byte[]{(byte) (now.getYear() >> 8), (byte) (now.getYear())};
-        String year = ConversionUtils.formatHex(yearBytes);
-        String month = ConversionUtils.toHexDigits((byte) now.getMonthValue());
-        String day = ConversionUtils.toHexDigits((byte) now.getDayOfMonth());
-        String hour = ConversionUtils.toHexDigits((byte) now.getHour());
-        String minute = ConversionUtils.toHexDigits((byte) now.getMinute());
-        String second = ConversionUtils.toHexDigits((byte) now.getSecond());
-        return List.of(year.substring(0, 2), year.substring(2), month, day, hour, minute, second);
+        return new byte[]{yearBytes[0], yearBytes[1], (byte) now.getMonthValue(), (byte) now.getDayOfMonth(), (byte) now.getHour(), (byte) now.getMinute(), (byte) now.getSecond()};
     }
 }

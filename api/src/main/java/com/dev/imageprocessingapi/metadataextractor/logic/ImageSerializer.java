@@ -32,7 +32,7 @@ public class ImageSerializer {
         byte[] length = ConversionUtils.encodeInteger(chunk.length());
         String typeInHex = ConversionUtils.convertSimpleStringToHexString(chunk.type());
         byte[] type = ConversionUtils.parseHexString(typeInHex);
-        byte[] bytes = ConversionUtils.parseHexString(String.join("", chunk.rawBytes()));
+        byte[] bytes = chunk.rawBytes();
         byte[] CRC = ConversionUtils.parseHexString(chunk.CRC());
 
         var outputStream = new ByteArrayOutputStream();

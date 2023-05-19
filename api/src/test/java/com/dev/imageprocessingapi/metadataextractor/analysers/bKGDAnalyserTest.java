@@ -4,15 +4,13 @@ import com.dev.imageprocessingapi.metadataextractor.analysers.impl.bKGDAnalyser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class bKGDAnalyserTest {
 
     @Test
     public void testAnalysePaletteIndex() {
-        List<String> rawBytes = List.of("00");
+        byte[] rawBytes = new byte[]{0x00};
         int colorType = 3;
         bKGDAnalyser analyser = new bKGDAnalyser(colorType);
 
@@ -23,7 +21,8 @@ public class bKGDAnalyserTest {
 
     @Test
     public void testAnalyseGray() {
-        List<String> rawBytes = Arrays.asList("00", "7f");
+        byte[] rawBytes = new byte[]{0x00, 0x7f};
+
         int colorType = 0;
         bKGDAnalyser analyser = new bKGDAnalyser(colorType);
 
@@ -34,7 +33,7 @@ public class bKGDAnalyserTest {
 
     @Test
     public void testAnalyseRGB() {
-        List<String> rawBytes = Arrays.asList("00", "ff", "00", "80", "00", "01");
+        byte[] rawBytes = new byte[]{0x00, (byte) 0xff, 0x00, (byte) 0x80, 0x00, 0x01};
         int colorType = 2;
         bKGDAnalyser analyser = new bKGDAnalyser(colorType);
 
@@ -47,7 +46,8 @@ public class bKGDAnalyserTest {
 
     @Test
     public void testInvalidData() {
-        List<String> rawBytes = Arrays.asList("00", "00", "00");
+//        List<String> rawBytes = Arrays.asList("00", "00", "00");
+        byte[] rawBytes = new byte[]{0x00, 0x00, 0x00};
         int colorType = 4;
         bKGDAnalyser analyser = new bKGDAnalyser(colorType);
 

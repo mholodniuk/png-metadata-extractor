@@ -15,15 +15,15 @@ public class PLTEAnalyser implements Analyser {
     private final int colorType, bitDepth;
 
     @Override
-    public Map<String, Object> analyse(List<String> rawBytes) {
+    public Map<String, Object> analyse(byte[] rawBytes) {
         validateBytes(rawBytes);
 
         var result = new HashMap<String, Object>();
         List<Color> palette = new ArrayList<>();
-        for (int i = 0; i < rawBytes.size(); i += 3) {
-            int red = ConversionUtils.fromHexDigits(rawBytes.get(i));
-            int green = ConversionUtils.fromHexDigits(rawBytes.get(i + 1));
-            int blue = ConversionUtils.fromHexDigits(rawBytes.get(i + 2));
+        for (int i = 0; i < rawBytes.length; i += 3) {
+            int red = ConversionUtils.fromHexDigits(ConversionUtils.toHexDigits(rawBytes[i]));
+            int green = ConversionUtils.fromHexDigits(ConversionUtils.toHexDigits(rawBytes[i + 1]));
+            int blue = ConversionUtils.fromHexDigits(ConversionUtils.toHexDigits(rawBytes[i + 2]));
             palette.add(new Color(red, green, blue));
         }
         result.put("Number of entries", palette.size());
@@ -32,12 +32,11 @@ public class PLTEAnalyser implements Analyser {
         return result;
     }
 
-    // todo: create chunk validators
-    private void validateBytes(List<String> bytes) {
-        if (bytes.size() % 3 != 0) {
+    private void validateBytes(byte[] bytes) {
+        if (bytes.length % 3 != 0) {
             throw new IllegalArgumentException("PLTE chunk length is not divisible by 3");
         }
-        int numEntries = bytes.size() / 3;
+        int numEntries = bytes.length / 3;
         if (colorType == 0 || colorType == 4) {
             throw new IllegalArgumentException("PLTE chunk should not appear for color types 0 and 4");
         }

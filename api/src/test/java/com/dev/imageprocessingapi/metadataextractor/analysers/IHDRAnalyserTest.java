@@ -3,7 +3,6 @@ package com.dev.imageprocessingapi.metadataextractor.analysers;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.IHDRAnalyser;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +12,9 @@ public class IHDRAnalyserTest {
 
     @Test
     void testAnalyse() {
-        List<String> rawBytes = List.of(
-                "00", "00", "00", "20", "00", "00", "00", "20", "08", "06", "00", "00", "00");
+        byte[] rawBytes = new byte[]{0x00, 0x00, 0x00, 0x20, 0x00,
+                0x00, 0x00, 0x20, 0x08, 0x06, 0x00, 0x00, 0x00};
+
         Map<String, Object> expectedProperties = Map.of(
                 "Compression method", 0,
                 "Interlace method", 0,

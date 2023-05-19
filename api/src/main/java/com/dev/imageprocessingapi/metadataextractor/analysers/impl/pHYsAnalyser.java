@@ -4,15 +4,13 @@ import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class pHYsAnalyser implements Analyser {
     private int iterator = 0;
     @Override
-    public Map<String, Object> analyse(List<String> rawBytes) {
-        if (rawBytes.size() != 9) {
+    public Map<String, Object> analyse(byte[] rawBytes) {
+        if (rawBytes.length != 9) {
             throw new IllegalArgumentException("pHYs chunk should contain 9 bytes of data");
         }
 
@@ -30,10 +28,12 @@ public class pHYsAnalyser implements Analyser {
         return result;
     }
 
-    private int getIntValue(List<String> rawBytes, int size) {
-        var hex = rawBytes.stream().skip(iterator).limit(size).collect(Collectors.joining());
-        iterator += size;
-        return ConversionUtils.fromHexDigits(hex);
+    private int getIntValue(byte[] rawBytes, int size) {
+        byte[] bytes = new byte[size];
+        for (int i = 0; i < size; iterator++, i++) {
+            bytes[i] = rawBytes[iterator];
+        }
+        return ConversionUtils.fromHexDigits(ConversionUtils.formatHex(bytes));
     }
 }
 

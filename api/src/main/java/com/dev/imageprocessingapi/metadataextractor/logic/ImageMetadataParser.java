@@ -41,7 +41,7 @@ public class ImageMetadataParser {
             String chunkType = readChunkType(iterator);
             iterator += RawChunk.TYPE_FIELD_LENGTH;
 
-            List<String> rawBytes = readRawBytes(iterator, length);
+            byte[] rawBytes = readRawBytes(iterator, length);
             iterator += length;
 
             String CRC = readCRC(iterator);
@@ -61,14 +61,12 @@ public class ImageMetadataParser {
         return ConversionUtils.formatHex(crcBytes);
     }
 
-    private List<String> readRawBytes(int iterator, int length) {
+    private byte[] readRawBytes(int iterator, int length) {
         byte[] data = new byte[length];
-        List<String> rawBytes = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             data[i] = bytes[i + iterator];
-            rawBytes.add(ConversionUtils.toHexDigits(data[i]));
         }
-        return rawBytes;
+        return data;
     }
 
     private String readChunkType(int iterator) {

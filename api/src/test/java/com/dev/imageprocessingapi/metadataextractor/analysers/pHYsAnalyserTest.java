@@ -3,7 +3,6 @@ package com.dev.imageprocessingapi.metadataextractor.analysers;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.pHYsAnalyser;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +12,7 @@ public class pHYsAnalyserTest {
 
     @Test
     public void testSimpleAnalyse() {
-        List<String> rawBytes = List.of("00", "00", "0b", "13", "00", "00", "0b", "13", "01");
+        byte[] rawBytes = new byte[]{0x00, 0x00, 0x0b, 0x13, 0x00, 0x00, 0x0b, 0x13, 0x01};
         Map<String, Object> expected = Map.of(
                 "Pixels per unit Y", 2835,
                 "Pixels per unit X", 2835,

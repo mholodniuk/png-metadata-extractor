@@ -2,17 +2,17 @@ package com.dev.imageprocessingapi.metadataextractor.analysers;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.gAMAAnalyser;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class gAMAAnalyserTest {
     private final gAMAAnalyser analyser = new gAMAAnalyser();
 
     @Test
     public void testSimpleAnalyse() {
-        List<String> rawBytes = List.of("00", "01", "86", "a0");
+        byte[] rawBytes = new byte[]{0x00, 0x01, (byte) 0x86, (byte) 0xa0};
         Map<String, Object> expected = Map.of("Gamma", 1.0);
 
         Map<String, Object> result = analyser.analyse(rawBytes);
@@ -22,7 +22,8 @@ public class gAMAAnalyserTest {
 
     @Test
     public void testComplexAnalyse() {
-        List<String> rawBytes = List.of("00", "00", "b1", "8f");
+        byte[] rawBytes = new byte[]{0x00, 0x00, (byte) 0xb1, (byte) 0x8f};
+
         Map<String, Object> expected = Map.of("Gamma", 0.45455);
 
         Map<String, Object> result = analyser.analyse(rawBytes);

@@ -1,11 +1,9 @@
 package com.dev.imageprocessingapi.metadataextractor.model;
 
-import java.util.List;
-
 public record RawChunk(String type,
                        int length,
                        int offset,
-                       List<String> rawBytes,
+                       byte[] rawBytes,
                        String CRC
                     ) {
     public static final int LENGTH_FIELD_LENGTH = 4;

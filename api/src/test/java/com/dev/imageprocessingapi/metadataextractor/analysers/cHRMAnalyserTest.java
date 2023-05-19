@@ -19,7 +19,12 @@ public class cHRMAnalyserTest {
                 "00", "00", "2f", "a8", "00", "00", "13", "cc"
         );
 
-        Map<String, Object> result = analyser.analyse(rawBytes);
+        byte[] byteArray = new byte[rawBytes.size()];
+        for (int i = 0; i < rawBytes.size(); i++) {
+            byteArray[i] = (byte) Integer.parseInt(rawBytes.get(i), 16);
+        }
+
+        Map<String, Object> result = analyser.analyse(byteArray);
 
         Assertions.assertEquals(0.28056, result.get("White point X"));
         Assertions.assertEquals(0.29582, result.get("White point Y"));
@@ -33,9 +38,7 @@ public class cHRMAnalyserTest {
 
     @Test
     void testInvalidData() {
-        List<String> rawBytes = Arrays.asList(
-                "00", "00", "6d", "98", "00", "00", "73", "8e"
-        );
+        byte[] rawBytes = new byte[]{0x00, 0x00, 0x6d, (byte) 0x98, 0x00, 0x00, 0x73, (byte) 0x8e};
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> analyser.analyse(rawBytes));

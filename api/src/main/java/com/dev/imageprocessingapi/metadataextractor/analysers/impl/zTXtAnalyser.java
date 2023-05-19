@@ -5,7 +5,6 @@ import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.convertHexByteArrayToSimpleString;
@@ -13,10 +12,10 @@ import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils
 
 public class zTXtAnalyser implements Analyser {
     @Override
-    public Map<String, Object> analyse(List<String> rawBytes) {
+    public Map<String, Object> analyse(byte[] rawBytes) {
         var result = new HashMap<String, Object>();
-        var textualData = String.join("", rawBytes);
-        var data = ConversionUtils.convertHexStringToSimpleString(textualData);
+        var textualData = ConversionUtils.formatHex(rawBytes);
+        var data = ConversionUtils.convertHexStringToSimpleString(ConversionUtils.formatHex(rawBytes));
 
         int separatorIndex = data.indexOf("\0");
         var keyword = data.substring(0, separatorIndex);
