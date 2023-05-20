@@ -17,6 +17,9 @@
       <mat-tab label="Properties" *ngIf="chunk.type !== 'IEND' && chunk.properties">
         <div [ngSwitch]="chunk.type">
           <ng-container *ngSwitchCase="'PLTE'">
+            <div>
+              <p style="font-size: large; margin-top: 0.5rem;">Number of entries: {{chunk.properties['Number of entries']}}</p>
+            </div>
             <div class="palette-container" [style.display]="isHorizontal ? 'grid' : 'flex'">
               <div *ngFor="let color of palette" 
                   [style.background-color]="'rgb(' + color.red + ',' + color.green + ',' + color.blue + ')'"
