@@ -1,8 +1,9 @@
+import io
 import logging
 from bson import ObjectId
 import bson
 import pika
-import cv2 as cv
+from PIL import Image
 import numpy as np
 from pymongo import MongoClient
 
@@ -56,23 +57,32 @@ class rabbitMQServer():
         id = body.decode('utf-8')
         document = mongo_collection.find_one({'_id': ObjectId(id)})
 
-        image = np.asarray(bytearray(document['bytes']), dtype="uint8")
-        image = cv.imdecode(image, cv.IMREAD_ANYCOLOR)
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        fourier = cv.dft(np.float32(gray), flags=cv.DFT_COMPLEX_OUTPUT)
-        fourier_shift = np.fft.fftshift(fourier)
+        image = Image.open(io.BytesIO(document['bytes'])).convert('L')
 
-        magnitude = 20 * np.log(cv.magnitude(fourier_shift[:, :, 0], fourier_shift[:, :, 1]))
-        magnitude = cv.normalize(magnitude, None, 0, 255, cv.NORM_MINMAX, cv.CV_8UC1)
+        image_array = np.array(image)
+        fft_result = np.fft.fft2(image_array)
+        fft_result_shift = np.fft.fftshift(fft_result)
 
-        _, image_bytes = cv.imencode('.png', magnitude)
-        image_bytes = image_bytes.tobytes()
+        magnitude_spectrum = np.asarray(20*np.log10(np.abs(fft_result_shift)), dtype=np.uint8) 
+        phase_spectrum = np.asarray(np.angle(fft_result_shift), dtype=np.uint8)
+
+        magnitude_image = Image.fromarray(np.uint8(magnitude_spectrum))
+        phase_image = Image.fromarray(np.uint8(phase_spectrum))
+
+        magnitude_bytes = io.BytesIO()
+        magnitude_image.save(magnitude_bytes, format='PNG')
+        magnitude_bytes = magnitude_bytes.getvalue()
+
+        phase_bytes = io.BytesIO()
+        phase_image.save(phase_bytes, format='PNG')
+        phase_bytes = phase_bytes.getvalue()
 
         result = mongo_collection.update_one(filter={
             '_id': ObjectId(id)
         }, update={
             '$set': {
-                'magnitude': bson.Binary(image_bytes)
+                'magnitude': bson.Binary(magnitude_bytes),
+                'phase': bson.Binary(phase_bytes)
             }
         })
         logging.info(f'affected documents: {result.matched_count}')
