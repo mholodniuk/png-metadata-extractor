@@ -14,31 +14,36 @@ export class FileService {
   uploadFile(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);
-    // return of('mock')
     return this.http.post(`${this.apiUrl}`, formData, { responseType: 'text' });
   }
 
   removeAncillaryChunks(id: string): Observable<object> {
-    return this.http.patch(`${this.apiUrl}/${id}`, {})
+    return this.http.patch(`${this.apiUrl}/${id}`, {});
   }
 
   removeSelectedChunks(id: string, chunks: string[]): Observable<object> {
     return this.http.patch(`${this.apiUrl}/${id}`, {
-        chunks: chunks,
-      }
-    );
+      chunks: chunks,
+    });
   }
 
   getImage(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}`, { responseType: 'blob'});
+    return this.http.get(`${this.apiUrl}/${id}`, { responseType: 'blob' });
   }
 
   getImageMagnitude(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}/magnitude`, { responseType: 'blob'});
+    return this.http.get(`${this.apiUrl}/${id}/magnitude`, {
+      responseType: 'blob',
+    });
+  }
+
+  getImagePhase(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/phase`, {
+      responseType: 'blob',
+    });
   }
 
   getImageMetadata(id: string): Observable<PNGData> {
-    // return of(mockPNG);
     return this.http.get<PNGData>(`${this.apiUrl}/${id}/metadata`);
   }
 }

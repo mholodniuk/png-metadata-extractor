@@ -32,17 +32,22 @@
   </mat-card>
   <hr style="margin: 1rem;" />
   <div *ngIf="currentFileMetadata$ | async as currentFileMetadata">
-    <div class="d-flex justify-content-center mx-5 align-items-center">
+    <div class="d-flex justify-content-center mx-3 align-items-center">
       <button mat-stroked-button color="primary" class="action-button" (click)="downloadImage()">
-        Download current image
+        Download image
       </button>
       <button mat-stroked-button color="primary" class="action-button" (click)="openMagnitudeDialog(currentFileMetadata.id)">
         Generate magnitude
       </button>
-      <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunks(currentFileMetadata.id)">
-        Remove all ancillary chunks
+      <button mat-stroked-button color="primary" class="action-button" (click)="openPhaseDialog(currentFileMetadata.id)">
+        Generate phase
       </button>
-      <button mat-raised-button color="warn" class="action-button" (click)="removeNotSelectedChunks(currentFileMetadata.id)">Remove not selected chunks</button>
+      <button mat-raised-button color="warn" class="action-button" (click)="removeAncillaryChunks(currentFileMetadata.id)">
+        Remove ancillary chunks
+      </button>
+      <button mat-raised-button color="warn" class="action-button" (click)="removeNotSelectedChunks(currentFileMetadata.id)">
+        Remove non-selected chunks
+      </button>
     </div>
     <hr style="margin: 1rem;" />
     <div class="d-flex justify-content-center">

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Properties } from 'src/app/models/PNGData';
 import { saveAs } from 'file-saver';
 import { MetadataStore } from '../../store/metadata.store';
 import { MatDialog } from '@angular/material/dialog';
-import { MagnitudeDialogComponent } from '../magnitude-dialog/magnitude-dialog.component';
+import { MagnitudeDialogComponent as SpectrumDialogComponent } from '../magnitude-dialog/magnitude-dialog.component';
 import { FileService } from 'src/app/services/file.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -96,13 +96,27 @@ export class FileUploadComponent implements OnInit {
   }
 
   downloadImage(): void {
-    saveAs(this.imageURL, this.fileName);
+    // todo fix this
+    this.currentFileMetadata$.subscribe((metadata) => {
+      saveAs(`http://localhost:8080/images/${metadata?.id}`, this.fileName);
+    });
   }
 
   openMagnitudeDialog(id: string): void {
     this.service.getImageMagnitude(id).subscribe((file) => {
       const url = window.URL.createObjectURL(file);
-      this.dialog.open(MagnitudeDialogComponent, {
+      this.dialog.open(SpectrumDialogComponent, {
+        data: {
+          url: url,
+        },
+      });
+    });
+  }
+
+  openPhaseDialog(id: string): void {
+    this.service.getImagePhase(id).subscribe((file) => {
+      const url = window.URL.createObjectURL(file);
+      this.dialog.open(SpectrumDialogComponent, {
         data: {
           url: url,
         },
