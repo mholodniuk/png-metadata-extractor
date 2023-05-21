@@ -2,7 +2,7 @@ package com.dev.imageprocessingapi.service;
 
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
-import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
+import com.dev.imageprocessingapi.exception.SpectrumNotGeneratedException;
 import com.dev.imageprocessingapi.metadataextractor.logic.ChunkValidator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
@@ -121,7 +121,7 @@ public class ImageServiceTest {
         try {
             imageService.getImageMagnitude(mockId);
         } catch (RuntimeException e) {
-            Assertions.assertTrue(e instanceof MagnitudeNotGeneratedException);
+            Assertions.assertTrue(e instanceof SpectrumNotGeneratedException);
         }
     }
 

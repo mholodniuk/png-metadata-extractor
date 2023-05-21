@@ -26,5 +26,7 @@ public class Image {
     @ToString.Exclude
     private Binary magnitude;
     @ToString.Exclude
+    private Binary phase;
+    @ToString.Exclude
     private Binary hash;
 }

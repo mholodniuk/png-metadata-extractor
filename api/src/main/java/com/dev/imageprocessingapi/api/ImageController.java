@@ -7,7 +7,9 @@ import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +41,10 @@ public class ImageController {
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImage(id);
 
-        return ResponseEntityUtils.createResponseEntity(image, false);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
+                .body(new ByteArrayResource(image.getBytes().getData()));
     }
 
     @GetMapping("/{id}/validate")
@@ -49,10 +54,17 @@ public class ImageController {
     }
 
     @GetMapping("/{id}/magnitude")
-    public ResponseEntity<ByteArrayResource> getImageMagnitude(@PathVariable @MongoObjectId String id) {
+    public ResponseEntity<ByteArrayResource> getImageMagnitudeSpectrum(@PathVariable @MongoObjectId String id) {
         var image = imageService.getImageMagnitude(id);
 
-        return ResponseEntityUtils.createResponseEntity(image, true);
+        return ResponseEntityUtils.createSpectrumResponseEntity(image, ResponseEntityUtils.Spectrum.MAGNITUDE);
+    }
+
+    @GetMapping("/{id}/phase")
+    public ResponseEntity<ByteArrayResource> getImagePhaseSpectrum(@PathVariable @MongoObjectId String id) {
+        var image = imageService.getImagePhase(id);
+
+        return ResponseEntityUtils.createSpectrumResponseEntity(image, ResponseEntityUtils.Spectrum.PHASE);
     }
 
     @PatchMapping(path = "/{id}")

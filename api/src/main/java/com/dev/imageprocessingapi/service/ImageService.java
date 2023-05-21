@@ -2,7 +2,7 @@ package com.dev.imageprocessingapi.service;
 
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
-import com.dev.imageprocessingapi.exception.MagnitudeNotGeneratedException;
+import com.dev.imageprocessingapi.exception.SpectrumNotGeneratedException;
 import com.dev.imageprocessingapi.metadataextractor.logic.ChunkValidator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
@@ -84,7 +84,16 @@ public class ImageService {
         var image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
         if (image.getMagnitude() == null)
-            throw new MagnitudeNotGeneratedException();
+            throw new SpectrumNotGeneratedException();
+
+        return image;
+    }
+
+    public Image getImagePhase(String id) {
+        var image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        if (image.getPhase() == null)
+            throw new SpectrumNotGeneratedException();
 
         return image;
     }

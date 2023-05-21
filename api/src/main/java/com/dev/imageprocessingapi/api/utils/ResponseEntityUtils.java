@@ -7,10 +7,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseEntityUtils {
-    public static ResponseEntity<ByteArrayResource> createResponseEntity(Image image, boolean useMagnitude) {
+    public enum Spectrum {
+        MAGNITUDE,
+        PHASE
+    }
+    public static ResponseEntity<ByteArrayResource> createSpectrumResponseEntity(Image image, Spectrum type) {
         var byteArrayResource = new ByteArrayResource(
-                useMagnitude ? image.getMagnitude().getData()
-                        : image.getBytes().getData());
+                type == Spectrum.MAGNITUDE ? image.getMagnitude().getData()
+                        : image.getPhase().getData());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))
