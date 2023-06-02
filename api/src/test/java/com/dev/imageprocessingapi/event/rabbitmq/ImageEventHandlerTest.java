@@ -1,6 +1,6 @@
-package com.dev.imageprocessingapi.aop.rabbitmq;
+package com.dev.imageprocessingapi.event.rabbitmq;
 
-import com.dev.imageprocessingapi.aop.ImageEventHandler;
+import com.dev.imageprocessingapi.event.ImageEventHandler;
 import com.dev.imageprocessingapi.model.Image;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

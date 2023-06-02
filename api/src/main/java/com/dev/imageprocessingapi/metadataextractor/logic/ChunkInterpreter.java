@@ -2,7 +2,7 @@ package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.*;
-import com.dev.imageprocessingapi.metadataextractor.model.*;
+import com.dev.imageprocessingapi.metadataextractor.dto.*;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import lombok.RequiredArgsConstructor;

@@ -11,10 +11,10 @@ public class ResponseEntityUtils {
         MAGNITUDE,
         PHASE
     }
+
     public static ResponseEntity<ByteArrayResource> createSpectrumResponseEntity(Image image, Spectrum type) {
         var byteArrayResource = new ByteArrayResource(
-                type == Spectrum.MAGNITUDE ? image.getMagnitude().getData()
-                        : image.getPhase().getData());
+                type == Spectrum.MAGNITUDE ? image.getMagnitude().getData() : image.getPhase().getData());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))

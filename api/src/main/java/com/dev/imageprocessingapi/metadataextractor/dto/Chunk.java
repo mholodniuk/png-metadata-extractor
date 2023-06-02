@@ -1,4 +1,4 @@
-package com.dev.imageprocessingapi.metadataextractor.model;
+package com.dev.imageprocessingapi.metadataextractor.dto;
 
 import java.util.List;
 import java.util.Map;

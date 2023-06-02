@@ -1,7 +1,7 @@
-package com.dev.imageprocessingapi.aop;
+package com.dev.imageprocessingapi.event;
 
 
-import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
+import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

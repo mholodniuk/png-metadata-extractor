@@ -7,7 +7,7 @@ import com.dev.imageprocessingapi.metadataextractor.logic.ChunkValidator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
-import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
+import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;

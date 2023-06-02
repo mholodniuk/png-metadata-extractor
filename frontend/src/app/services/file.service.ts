@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, of } from 'rxjs';
-import { PNGData, mockPNG } from '../models/PNGData';
+import { Observable } from 'rxjs';
+import { PNGData } from '../models/PNGData';
 
 @Injectable({
   providedIn: 'root',
