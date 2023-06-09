@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
+import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.metadataextractor.analysers.Analyser;
 import com.dev.imageprocessingapi.metadataextractor.analysers.impl.*;
 import com.dev.imageprocessingapi.metadataextractor.dto.*;
@@ -18,6 +19,7 @@ public class ChunkInterpreter {
     private Map<String, Object> IHDRInfo;
     private static final int RAW_BYTES_LENGTH_LIMIT = 200;
 
+    @TrackExecutionTime
     public PNGMetadata appendInterpretedInformation(String id, List<RawChunk> chunks) {
         List<Chunk> processedChunks = new ArrayList<>();
         RawChunk IHDR = chunks.get(0);

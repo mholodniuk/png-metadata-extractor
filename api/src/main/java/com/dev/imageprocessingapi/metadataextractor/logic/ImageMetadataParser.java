@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
+import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
@@ -18,6 +19,7 @@ public class ImageMetadataParser {
     private final ChunkInterpreter interpreter;
     private byte[] bytes;
 
+    @TrackExecutionTime
     public PNGMetadata processImage(Image image) {
         List<RawChunk> rawChunks = readRawChunks(image);
         return interpreter.appendInterpretedInformation(image.getId(), rawChunks);

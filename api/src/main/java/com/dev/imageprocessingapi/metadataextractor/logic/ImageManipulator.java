@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
+import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.InvalidChunkDeletionException;
 import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
 import com.dev.imageprocessingapi.model.Image;
@@ -14,6 +15,7 @@ public class ImageManipulator {
     private final List<String> criticalChunks = List.of("IHDR", "PLTE", "IDAT", "IEND");
     private final ImageMetadataParser parser;
 
+    @TrackExecutionTime
     public List<RawChunk> removeAncillaryChunks(Image image) {
         var chunks = parser.readRawChunks(image);
 
@@ -22,6 +24,7 @@ public class ImageManipulator {
                 .toList();
     }
 
+    @TrackExecutionTime
     public List<RawChunk> removeGivenChunks(Image image, List<String> chunksToDelete) {
         var chunks = parser.readRawChunks(image);
 
