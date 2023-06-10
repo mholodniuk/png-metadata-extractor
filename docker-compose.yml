@@ -5,6 +5,9 @@ services:
     hostname: spring
     build: ./api
     restart: always
+    environment:
+      # - SPRING_PROFILES_ACTIVE=dev
+      - "SPRING_PROFILES_ACTIVE=prod"
     ports:
       - 8080:8080
     depends_on:

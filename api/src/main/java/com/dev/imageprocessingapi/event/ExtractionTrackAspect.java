@@ -6,10 +6,10 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-@Aspect
 @Slf4j
+@Aspect
 @Component
-public class ExtractionTrackAdvice {
+public class ExtractionTrackAspect {
     @Around("@annotation(com.dev.imageprocessingapi.event.annotation.TrackExecutionTime)")
     public Object executionTime(ProceedingJoinPoint point) throws Throwable {
         long startTime = System.nanoTime();
