@@ -33,6 +33,10 @@ public class ChunkInterpreter {
         return new PNGMetadata(id, true, processedChunks);
     }
 
+    public Chunk analyseChunk(RawChunk rawChunk, String type) {
+        return processRawChunk(rawChunk, matchAnalyserToChunkType(type));
+    }
+
     private Chunk processRawChunk(RawChunk rawChunk, Analyser analyser) {
         Map<String, Object> properties = analyser != null ? analyser.analyse(rawChunk.rawBytes()) : null;
         List<String> rawBytes = rawChunk.length() > RAW_BYTES_LENGTH_LIMIT

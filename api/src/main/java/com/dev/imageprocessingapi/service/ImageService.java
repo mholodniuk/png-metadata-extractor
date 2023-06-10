@@ -132,5 +132,7 @@ public class ImageService {
         Binary criticalChunksAsBytes = serializer.saveAsPNG(chunks);
 
         image.setBytes(criticalChunksAsBytes);
+
+        imageRepository.save(image);
     }
 }
