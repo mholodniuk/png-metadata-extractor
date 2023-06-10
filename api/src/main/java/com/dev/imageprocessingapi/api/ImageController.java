@@ -73,5 +73,11 @@ public class ImageController {
         imageService.removeChunks(id, chunks);
         return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }
+
+    @PatchMapping(path = "/{id}/encrypt")
+    public ResponseEntity<?> encryptImage(@PathVariable @MongoObjectId String id) {
+        imageService.encryptImage(id);
+        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
+    }
 }
 

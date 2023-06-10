@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.SpectrumNotGeneratedException;
@@ -120,5 +121,16 @@ public class ImageService {
         image.setBytes(criticalChunksAsBytes);
 
         imageRepository.save(image);
+    }
+
+    @TrackExecutionTime
+    public void encryptImage(String id) {
+        var image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        var chunks = manipulator.encryptImage(image);
+        Binary criticalChunksAsBytes = serializer.saveAsPNG(chunks);
+
+        image.setBytes(criticalChunksAsBytes);
     }
 }
