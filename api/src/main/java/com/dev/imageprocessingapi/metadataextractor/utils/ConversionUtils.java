@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.zip.CRC32;
 import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class ConversionUtils {
@@ -29,11 +30,11 @@ public class ConversionUtils {
     }
 
     public static byte[] encodeInteger(int value) {
-        return new byte[] {
-                (byte)(value >>> 24),
-                (byte)(value >>> 16),
-                (byte)(value >>> 8),
-                (byte)value};
+        return new byte[]{
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) value};
     }
 
     public static int fromHexDigits(String hex) {
@@ -47,6 +48,7 @@ public class ConversionUtils {
         }
         return hex.toString();
     }
+
     public static String convertHexStringToSimpleString(String hex) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < hex.length() - 1; i += 2) {
@@ -80,9 +82,38 @@ public class ConversionUtils {
         }
     }
 
+    public static byte[] compressZlib(byte[] inputBytes) throws DataFormatException {
+        Deflater deflater = new Deflater();
+        deflater.setInput(inputBytes);
+        deflater.finish();
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(inputBytes.length)) {
+            byte[] buffer = new byte[1024];
+            while (!deflater.finished()) {
+                int count = deflater.deflate(buffer);
+                outputStream.write(buffer, 0, count);
+            }
+            outputStream.close();
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new DataFormatException("Failed to compress Zlib data: " + e.getMessage());
+        } finally {
+            deflater.end();
+        }
+    }
+
+    public static int[] byteArrayToIntArray(byte[] byteArray) {
+        int[] intArray = new int[byteArray.length];
+        for (int i = 0; i < byteArray.length; i++) {
+            intArray[i] = byteArray[i] & 0xFF;
+        }
+        return intArray;
+    }
+
+
     public static String calculateCRC(byte[] bytes, String type) {
         CRC32 crc = new CRC32();
-        byte[] concatArray = Arrays.copyOf(type.getBytes(),  type.getBytes().length + bytes.length);
+        byte[] concatArray = Arrays.copyOf(type.getBytes(), type.getBytes().length + bytes.length);
         System.arraycopy(bytes, 0, concatArray, type.getBytes().length, bytes.length);
         crc.update(concatArray);
         return Long.toHexString(crc.getValue()).toUpperCase();
