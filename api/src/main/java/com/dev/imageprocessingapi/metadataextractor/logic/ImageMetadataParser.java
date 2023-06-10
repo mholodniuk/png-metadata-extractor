@@ -1,7 +1,7 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
-import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
+import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;

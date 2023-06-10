@@ -2,7 +2,7 @@ package com.dev.imageprocessingapi.metadataextractor.logic;
 
 import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.ChunksSavingException;
-import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
+import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;

@@ -1,6 +1,6 @@
 package com.dev.imageprocessingapi;
 
-import com.dev.imageprocessingapi.metadataextractor.dto.RawChunk;
+import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 
 import java.util.List;
 

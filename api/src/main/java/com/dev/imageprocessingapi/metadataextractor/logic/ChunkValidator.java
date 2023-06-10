@@ -1,6 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
-import com.dev.imageprocessingapi.metadataextractor.dto.Chunk;
+import com.dev.imageprocessingapi.metadataextractor.domain.Chunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import lombok.AllArgsConstructor;
