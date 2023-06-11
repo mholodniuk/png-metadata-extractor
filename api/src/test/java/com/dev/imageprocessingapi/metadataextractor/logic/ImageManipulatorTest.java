@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
+import com.dev.imageprocessingapi.encryption.RSA;
 import com.dev.imageprocessingapi.exception.InvalidChunkDeletionException;
 import com.dev.imageprocessingapi.model.Image;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +21,8 @@ import static org.mockito.BDDMockito.then;
 public class ImageManipulatorTest {
     @MockBean
     private ImageMetadataParser parser;
+    @MockBean
+    private RSA rsa;
     @Autowired
     private ImageManipulator manipulator;
 
