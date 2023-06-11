@@ -48,11 +48,13 @@ public class RSA {
         var compressedBytes = concatMany(joinedBytes);
         var byteArray = divideByteArray(compressedBytes, blockSize);
 
+        var encryptedResult = new ArrayList<byte[]>();
         for (byte[] buf : byteArray) {
             System.out.println("chunk.rawBytes() " + formatByteArray(buf));
             System.out.println("chunk.rawBytes().length " + buf.length);
 
             var encrypted = encrypt(buf, publicKey);
+            encryptedResult.add(encrypted);
             System.out.println("encrypted " + formatByteArray(encrypted));
             System.out.println("encrypted.length " + encrypted.length);
 
@@ -61,26 +63,16 @@ public class RSA {
             System.out.println("decrypted " + formatByteArray(decrypted));
             System.out.println("decrypted.length " + decrypted.length);
         }
-
-
+        System.out.println(encryptedResult);
 
 
         var result = new ArrayList<RawChunk>();
         for (var chunk : chunks) {
-            result.add(chunk);
-//            if (chunk.type().equals("IDAT")) {
-//                System.out.println("chunk.rawBytes() " + Arrays.toString(chunk.rawBytes()));
-//                System.out.println("chunk.rawBytes().length " + chunk.rawBytes().length);
-//
-//                var encrypted = encrypt(chunk.rawBytes(), publicKey);
-//                System.out.println("encrypted " + Arrays.toString(encrypted));
-//                System.out.println("encrypted.length " + encrypted.length);
-//
-//                var decrypted = decrypt(encrypted, privateKey, chunk.length());
-//
-//                System.out.println("decrypted " + Arrays.toString(decrypted));
-//                System.out.println("decrypted.length " + decrypted.length);
-//            }
+            if (chunk.type().equals("IDAT")) {
+                result.add(new RawChunk("IDAT", encryptedResult.get(0).length, null, encryptedResult.get(0), calculateCRC(encryptedResult.get(0), "IDAT")));
+            } else {
+                result.add(chunk);
+            }
         }
 
         return result;
