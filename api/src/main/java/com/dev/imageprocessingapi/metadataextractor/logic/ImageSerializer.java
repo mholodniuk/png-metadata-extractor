@@ -1,6 +1,5 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
-import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.ChunksSavingException;
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
@@ -16,7 +15,6 @@ import java.util.List;
 public class ImageSerializer {
     private static final String PNGHeader = "89504e470d0a1a0a";
 
-    @TrackExecutionTime
     public Binary saveAsPNG(List<RawChunk> chunks) {
         var resultOutputStream = new ByteArrayOutputStream();
         try {

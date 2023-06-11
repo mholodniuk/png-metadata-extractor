@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.encryption.CustomPrivateKey;
 import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
@@ -129,6 +130,18 @@ public class ImageService {
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         var chunks = manipulator.encryptImage(image);
+        Binary criticalChunksAsBytes = serializer.saveAsPNG(chunks);
+
+        image.setBytes(criticalChunksAsBytes);
+
+        imageRepository.save(image);
+    }
+
+    public void decryptImage(String id, CustomPrivateKey privateKey) {
+        var image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        var chunks = manipulator.decryptImage(image, privateKey);
         Binary criticalChunksAsBytes = serializer.saveAsPNG(chunks);
 
         image.setBytes(criticalChunksAsBytes);

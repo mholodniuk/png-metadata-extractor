@@ -2,6 +2,7 @@ package com.dev.imageprocessingapi.encryption;
 
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.logic.ChunkInterpreter;
+import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.repository.support.SimpleReactiveMongoRepository;
 import org.springframework.stereotype.Component;
@@ -32,45 +33,43 @@ public class RSA {
     // jak sobie radzimy z paddingiem
     // jak radzimy sobie z tym ze dane po zaszyfrowaniu maja wiekszy rozmiar
 
-    public List<RawChunk> encryptECB(List<RawChunk> chunks, int keyLength) throws BadPaddingException, DataFormatException, NoSuchAlgorithmException {
-        if (keyLength % 8 != 0) {
-            throw new RuntimeException("KEY INVALID!!! SHOULD BE DIVISIBLE BY 8");
-        }
+    public List<RawChunk> encryptECB(List<RawChunk> chunks, CustomPublicKey publicKey, CustomPrivateKey privateKey) throws BadPaddingException, DataFormatException, NoSuchAlgorithmException {
+        int keyLength = publicKey.n().bitLength();
 
         int compressionLevel = (Integer) interpreter.analyseChunk(chunks.get(0), "IHDR").properties()
                 .get("Compression method") == 0 ? Deflater.DEFLATED : Deflater.BEST_COMPRESSION;
-        var customKeyPair = generateRSACustomKeyPair(keyLength);
 
         int blockSize = (keyLength / 8) - 1;
-        System.out.println("blockSize: " + blockSize);
         var joinedBytes = joinIDATs(chunks);
 
         var compressedBytes = concatMany(joinedBytes);
+        System.out.println("compressedBytes " + map(compressedBytes));
+        System.out.println("compressedBytes.length " + compressedBytes.length);
+
         var decompressedBytes = decompressZlib(compressedBytes);
+        System.out.println("decompressedBytes " + map(decompressedBytes));
+        System.out.println("decompressedBytes.length " + decompressedBytes.length);
 
-        var numOfBlocks = decompressedBytes.length / blockSize;
-        System.out.println("numOfBlocks " + numOfBlocks);
-        System.out.println("bytes.length " + decompressedBytes.length);
-
-        var rest = decompressedBytes.length - (blockSize * numOfBlocks);
-        System.out.println("rest: " + rest);
-
-        var divided = divideByteArray(decompressedBytes, blockSize);
+        var dividedDecompressed = divideByteArray(decompressedBytes, blockSize);
 
         var encrypted = new ArrayList<byte[]>();
-        for (var bytes : divided) {
-            var rsa = encrypt(bytes, customKeyPair.publicKey());
+        for (var bytes : dividedDecompressed) {
+            var rsa = encrypt(bytes, publicKey);
             encrypted.add(rsa);
         }
         var encryptedJoined = concatMany(encrypted);
 
-        System.out.println("encryptedJoined " + Arrays.toString(encryptedJoined));
+        System.out.println("encryptedJoined " + map(encryptedJoined));
         System.out.println("encryptedJoined.length " + encryptedJoined.length);
 
         var encryptedJoinedCompressed = compressZlib(encryptedJoined, compressionLevel);
 
-        System.out.println("encryptedJoinedCompressed " + Arrays.toString(encryptedJoinedCompressed));
+        System.out.println("encryptedJoinedCompressed " + map(encryptedJoinedCompressed));
         System.out.println("encryptedJoinedCompressed.length " + encryptedJoinedCompressed.length);
+
+        if (countIDATs(chunks) != 1) {
+            throw new IllegalArgumentException("Images with more than 1 IDATs are not supported");
+        }
 
         var result = new ArrayList<RawChunk>();
         for (var chunk : chunks) {
@@ -81,10 +80,75 @@ public class RSA {
             }
         }
 
-        var mockBytes = new byte[]{1, 2, 3, 4};
-        chunks.add(chunks.size() - 1, new RawChunk("xxxx", 4, null, mockBytes, calculateCRC(mockBytes, "xxxx")));
         return result;
     }
+    //        for (var chunk : chunks) {
+//            result.add(chunk);
+//            if (chunk.type().equals("IDAT")) {
+//                System.out.println("chunk.rawBytes() " + Arrays.toString(chunk.rawBytes()));
+//                System.out.println("chunk.rawBytes().length " + chunk.rawBytes().length);
+//
+//                var encrypted = crypt(chunk.rawBytes(), keys.publicKey());
+//                System.out.println("encrypted " + Arrays.toString(encrypted));
+//                System.out.println("encrypted.length " + encrypted.length);
+//
+//                var decrypted = decrypt(encrypted, keys.privateKey(), chunk.length());
+//
+//                System.out.println("decrypted " + Arrays.toString(decrypted));
+//                System.out.println("decrypted.length " + decrypted.length);
+//
+//                System.out.println(Arrays.equals(chunk.rawBytes(), decrypted));
+//            }
+//        }
+
+    public List<RawChunk> decryptECB(List<RawChunk> chunks, CustomPrivateKey privateKey) throws BadPaddingException, DataFormatException, NoSuchAlgorithmException {
+        int compressionLevel = (Integer) interpreter.analyseChunk(chunks.get(0), "IHDR").properties()
+                .get("Compression method") == 0 ? Deflater.DEFLATED : Deflater.BEST_COMPRESSION;
+
+        var joinedBytes = joinIDATs(chunks);
+
+        var compressedBytes = concatMany(joinedBytes);
+        System.out.println("compressedBytes " + map(compressedBytes));
+        System.out.println("compressedBytes length" + compressedBytes.length);
+        var decompressedBytes = decompressZlib(compressedBytes);
+        System.out.println("decompressedBytes in decrypt " + map(decompressedBytes));
+        System.out.println("decompressedBytes.length in decrypt " + decompressedBytes.length);
+
+        int keyLength = privateKey.n().bitLength();
+        int blockSize = (keyLength / 8) - 1;
+
+        var dividedDecompressed = divideByteArray(decompressedBytes, blockSize);
+        var decrypted = new ArrayList<byte[]>();
+        for (var bytes : dividedDecompressed) {
+            var rsa = decrypt(bytes, privateKey, getIDATSizes(chunks).get(0));
+            decrypted.add(rsa);
+        }
+        var decryptedJoined = concatMany(decrypted);
+        System.out.println("decryptedJoined " + map(decryptedJoined));
+        System.out.println("decryptedJoined.length " + decryptedJoined.length);
+
+        var decryptedJoinedCompressed = compressZlib(decryptedJoined, compressionLevel);
+
+        System.out.println("decryptedJoinedCompressed " + map(decryptedJoinedCompressed));
+        System.out.println("decryptedJoinedCompressed.length " + decryptedJoinedCompressed.length);
+
+
+        if (countIDATs(chunks) != 1) {
+            throw new IllegalArgumentException("Images with more than 1 IDATs are not supported");
+        }
+
+        var result = new ArrayList<RawChunk>();
+        for (var chunk : chunks) {
+            if (chunk.type().equals("IDAT")) {
+                result.add(new RawChunk("IDAT", decryptedJoinedCompressed.length, null, decryptedJoinedCompressed, calculateCRC(decryptedJoinedCompressed, "IDAT")));
+            } else {
+                result.add(chunk);
+            }
+        }
+
+        return result;
+    }
+
 
     public byte[] encrypt(byte[] msg, CustomPublicKey key) throws BadPaddingException {
         BigInteger m = parseMsg(msg, key.n());
@@ -121,6 +185,14 @@ public class RSA {
         return base.modPow(exponent, modulus);
     }
 
+    private static List<String> map(byte[] bytes) {
+        List<String> result = new ArrayList<>();
+        for (byte b : bytes) {
+            result.add(ConversionUtils.toHexDigits(b));
+        }
+        return result;
+    }
+
     private BigInteger parseMsg(byte[] msg, BigInteger n) throws BadPaddingException {
         BigInteger m = new BigInteger(1, msg);
         if (m.compareTo(n) >= 0) {
@@ -155,22 +227,15 @@ public class RSA {
     }
 
     private static long countIDATs(List<RawChunk> chunks) {
-        return chunks.stream()
-                .filter(chunk -> chunk.type().equals("IDAT"))
-                .count();
+        return chunks.stream().filter(chunk -> chunk.type().equals("IDAT")).count();
     }
 
     private static List<Integer> getIDATSizes(List<RawChunk> chunks) {
-        return chunks.stream()
-                .filter(chunk -> chunk.type().equals("IDAT"))
-                .map(RawChunk::length)
-                .toList();
+        return chunks.stream().filter(chunk -> chunk.type().equals("IDAT")).map(RawChunk::length).toList();
     }
 
     private static List<byte[]> joinIDATs(List<RawChunk> chunks) {
-        return chunks.stream()
-                .filter(chunk -> chunk.type().equals("IDAT"))
-                .map(RawChunk::rawBytes).toList();
+        return chunks.stream().filter(chunk -> chunk.type().equals("IDAT")).map(RawChunk::rawBytes).toList();
     }
 
     public static List<byte[]> divideByteArray(byte[] inputArray, int chunkSize) {
