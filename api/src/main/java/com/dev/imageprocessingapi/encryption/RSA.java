@@ -1,50 +1,22 @@
 package com.dev.imageprocessingapi.encryption;
 
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
-<<<<<<< HEAD
 import com.dev.imageprocessingapi.metadataextractor.logic.ChunkInterpreter;
-=======
->>>>>>> origin/rsa
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
-<<<<<<< HEAD
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-=======
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
->>>>>>> origin/rsa
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-<<<<<<< HEAD
 import java.util.zip.DataFormatException;
 
 import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
 import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.*;
-
-
-/*
- * 1. mam ilosc chunkow idat, poszczegolne dlugosci bajtow w nich mam
- * 2. łączę wszystkie możliwe dane do jednej tablicy
- * 3. muszę znać rozmiar tablic na jakie musi tekst być podzielony
- * 4. szyfruje dane w n ilosci tablic
- * 5. lacze te dane do jednej wielkiej tablicy
- * 6. znajac ilosc danych dla kazdego z chunkow idat, wkladam tam tyle ile sie da
- * 7. robie to dla kazdego z idatow, lub do skonczenia miejsca
- * 8. pozostałe dane wkladam do customowego chunka ???? lub za iend
- * */
-=======
-
-import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
->>>>>>> origin/rsa
 
 @Component
 @AllArgsConstructor
@@ -75,18 +47,19 @@ public class RSA {
         System.out.println("bytes size: " + bytes.length);
 
         var decompressed = decompressZlib(bytes);
-        System.out.println("decompressed " + Arrays.toString(decompressed));
+//        System.out.println("decompressed " + Arrays.toString(decompressed));
         System.out.println("decompressed size " + decompressed.length);
 
-        var compressed = compressZlib(bytes, compressionLevel);
+        var compressed = decompressZlib(compressZlib(bytes, compressionLevel));
         System.out.println("compressed " + Arrays.toString(compressed));
         System.out.println("compressed size " + compressed.length);
 
-        var decompressedBack = decompressZlib(decompressZlib(compressed));
-        System.out.println("decompressed back " + Arrays.toString(decompressedBack));
+        var decompressedBack = decompressZlib(compressed);
+//        System.out.println("decompressed back " + Arrays.toString(decompressedBack));
         System.out.println("decompressed back size " + decompressedBack.length);
 
-        System.out.println(Arrays.compare(decompressedBack, decompressedBack) == 0);
+        System.out.println(Arrays.compare(decompressed, decompressedBack) == 0);
+        System.out.println(Arrays.compare(bytes, compressed) == 0);
 
 //        var numOfBlocks = bytes.length / blockSize;
 //        System.out.println("numOfBlocks " + numOfBlocks);

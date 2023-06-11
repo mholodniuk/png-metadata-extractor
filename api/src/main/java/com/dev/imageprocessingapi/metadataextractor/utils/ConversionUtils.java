@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.zip.CRC32;
 import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class ConversionUtils {
@@ -81,8 +82,8 @@ public class ConversionUtils {
         }
     }
 
-    public static byte[] compressZlib(byte[] inputBytes) throws DataFormatException {
-        Deflater deflater = new Deflater();
+    public static byte[] compressZlib(byte[] inputBytes, int compressionLevel) throws DataFormatException {
+        Deflater deflater = new Deflater(compressionLevel);
         deflater.setInput(inputBytes);
         deflater.finish();
 
