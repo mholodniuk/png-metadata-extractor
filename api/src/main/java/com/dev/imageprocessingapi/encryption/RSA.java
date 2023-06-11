@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
 import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.*;
@@ -35,31 +37,33 @@ public class RSA {
             throw new RuntimeException("KEY INVALID!!! SHOULD BE DIVISIBLE BY 8");
         }
 
-        int compressionLevel = (Integer) interpreter.analyseChunk(chunks.get(0), "IHDR").properties().get("Compression method");
+        int compressionLevel = (Integer) interpreter.analyseChunk(chunks.get(0), "IHDR").properties()
+                .get("Compression method") == 0 ? Deflater.DEFLATED : Deflater.BEST_COMPRESSION;
+        System.out.println("compressionLevel " + compressionLevel);
         var customKeyPair = generateRSACustomKeyPair(keyLength);
 
         int blockSize = keyLength / 8 - 1;
         System.out.println("blockSize: " + blockSize);
         var joinedBytes = joinIDATs(chunks);
 
-        var bytes = concatMany(joinedBytes);
-        System.out.println("original: " + Arrays.toString(bytes));
-        System.out.println("bytes size: " + bytes.length);
+        var original = concatMany(joinedBytes);
+        System.out.println("original: " + Arrays.toString(original));
+        System.out.println("bytes size: " + original.length);
 
-        var decompressed = decompressZlib(bytes);
-//        System.out.println("decompressed " + Arrays.toString(decompressed));
+        var decompressed = decompressZlib(original);
+        System.out.println("decompressed " + Arrays.toString(decompressed));
         System.out.println("decompressed size " + decompressed.length);
 
-        var compressed = decompressZlib(compressZlib(bytes, compressionLevel));
+        var compressed = compressZlib(decompressed, compressionLevel);
         System.out.println("compressed " + Arrays.toString(compressed));
         System.out.println("compressed size " + compressed.length);
 
         var decompressedBack = decompressZlib(compressed);
-//        System.out.println("decompressed back " + Arrays.toString(decompressedBack));
+        System.out.println("decompressed back " + Arrays.toString(decompressedBack));
         System.out.println("decompressed back size " + decompressedBack.length);
 
         System.out.println(Arrays.compare(decompressed, decompressedBack) == 0);
-        System.out.println(Arrays.compare(bytes, compressed) == 0);
+        System.out.println(Arrays.compare(original, compressed) == 0);
 
 //        var numOfBlocks = bytes.length / blockSize;
 //        System.out.println("numOfBlocks " + numOfBlocks);
@@ -98,7 +102,7 @@ public class RSA {
 //            }
 //        }
         var mockBytes = new byte[]{1, 2, 3, 4};
-        chunks.add(chunks.size() - 1, new RawChunk("xxxx", 4, null, mockBytes, calculateCRC(mockBytes, "xxxx")));
+        chunks.add(chunks.size() - 1, new RawChunk("xRSA", 4, null, mockBytes, calculateCRC(mockBytes, "xxxx")));
         return chunks;
     }
 
