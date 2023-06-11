@@ -1,18 +1,30 @@
 package com.dev.imageprocessingapi.encryption;
 
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
+<<<<<<< HEAD
 import com.dev.imageprocessingapi.metadataextractor.logic.ChunkInterpreter;
+=======
+>>>>>>> origin/rsa
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
+<<<<<<< HEAD
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+=======
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
+import java.security.InvalidKeyException;
+>>>>>>> origin/rsa
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+<<<<<<< HEAD
 import java.util.zip.DataFormatException;
 
 import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
@@ -29,6 +41,10 @@ import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils
  * 7. robie to dla kazdego z idatow, lub do skonczenia miejsca
  * 8. pozostałe dane wkladam do customowego chunka ???? lub za iend
  * */
+=======
+
+import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
+>>>>>>> origin/rsa
 
 @Component
 @AllArgsConstructor
