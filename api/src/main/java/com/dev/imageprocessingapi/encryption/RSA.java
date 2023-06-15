@@ -7,17 +7,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
+import javax.imageio.ImageIO;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-
-import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.*;
 
 @Component
 @AllArgsConstructor
@@ -31,102 +31,15 @@ public class RSA {
     // jak sobie radzimy z paddingiem
     // jak radzimy sobie z tym ze dane po zaszyfrowaniu maja wiekszy rozmiar
 
-    public List<RawChunk> encryptECB(List<RawChunk> chunks, CustomPublicKey publicKey, CustomPrivateKey privateKey) throws BadPaddingException, DataFormatException, NoSuchAlgorithmException {
-        if (countIDATs(chunks) != 1) {
-            throw new IllegalArgumentException("Images with more than 1 IDATs are not supported");
-        }
+    public void encryptECB(byte[] bytes, CustomPublicKey publicKey) throws IOException {
+        var inputStream = new ByteArrayInputStream(bytes);
+        var image = ImageIO.read(inputStream);
+        byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
-        int keyLength = publicKey.n().bitLength();
+        System.out.println(formatByteArray(pixels));
+        System.out.println(pixels.length);
 
-        int compressionLevel = (Integer) interpreter.analyseChunk(chunks.get(0), "IHDR").properties()
-                .get("Compression method") == 0 ? Deflater.DEFLATED : Deflater.BEST_COMPRESSION;
-
-        var originalIDATSize = getIDATSizes(chunks);
-
-        int blockSize = (keyLength / 8) - 1;
-        var joinedBytes = joinIDATs(chunks);
-        var compressedBytes = concatMany(joinedBytes);
-        var byteArray = divideByteArray(compressedBytes, blockSize);
-
-        var encryptedResult = new ArrayList<byte[]>();
-        for (byte[] buf : byteArray) {
-            System.out.println("chunk.rawBytes() " + formatByteArray(buf));
-            System.out.println("chunk.rawBytes().length " + buf.length);
-
-            var encrypted = encrypt(buf, publicKey);
-            encryptedResult.add(encrypted);
-            System.out.println("encrypted " + formatByteArray(encrypted));
-            System.out.println("encrypted.length " + encrypted.length);
-
-            var decrypted = decrypt(encrypted, privateKey, buf.length);
-
-            System.out.println("decrypted " + formatByteArray(decrypted));
-            System.out.println("decrypted.length " + decrypted.length);
-        }
-        System.out.println(encryptedResult);
-
-
-        var result = new ArrayList<RawChunk>();
-        for (var chunk : chunks) {
-            if (chunk.type().equals("IDAT")) {
-                result.add(new RawChunk("IDAT", encryptedResult.get(0).length, null, encryptedResult.get(0), calculateCRC(encryptedResult.get(0), "IDAT")));
-            } else {
-                result.add(chunk);
-            }
-        }
-
-        return result;
     }
-
-
-    public List<RawChunk> decryptECB(List<RawChunk> chunks, CustomPrivateKey privateKey) throws BadPaddingException, DataFormatException, NoSuchAlgorithmException {
-        int compressionLevel = (Integer) interpreter.analyseChunk(chunks.get(0), "IHDR").properties()
-                .get("Compression method") == 0 ? Deflater.DEFLATED : Deflater.BEST_COMPRESSION;
-
-        var joinedBytes = joinIDATs(chunks);
-
-        var compressedBytes = concatMany(joinedBytes);
-        System.out.println("compressedBytes " + formatByteArray(compressedBytes));
-        System.out.println("compressedBytes length" + compressedBytes.length);
-        var decompressedBytes = decompressZlib(compressedBytes);
-        System.out.println("decompressedBytes in decrypt " + formatByteArray(decompressedBytes));
-        System.out.println("decompressedBytes.length in decrypt " + decompressedBytes.length);
-
-        int keyLength = privateKey.n().bitLength();
-        int blockSize = (keyLength / 8) - 1;
-
-        var dividedDecompressed = divideByteArray(decompressedBytes, blockSize);
-        var decrypted = new ArrayList<byte[]>();
-        for (var bytes : dividedDecompressed) {
-            var rsa = decrypt(bytes, privateKey, getIDATSizes(chunks).get(0));
-            decrypted.add(rsa);
-        }
-        var decryptedJoined = concatMany(decrypted);
-        System.out.println("decryptedJoined " + formatByteArray(decryptedJoined));
-        System.out.println("decryptedJoined.length " + decryptedJoined.length);
-
-        var decryptedJoinedCompressed = compressZlib(decryptedJoined, compressionLevel);
-
-        System.out.println("decryptedJoinedCompressed " + formatByteArray(decryptedJoinedCompressed));
-        System.out.println("decryptedJoinedCompressed.length " + decryptedJoinedCompressed.length);
-
-
-        if (countIDATs(chunks) != 1) {
-            throw new IllegalArgumentException("Images with more than 1 IDATs are not supported");
-        }
-
-        var result = new ArrayList<RawChunk>();
-        for (var chunk : chunks) {
-            if (chunk.type().equals("IDAT")) {
-                result.add(new RawChunk("IDAT", decryptedJoinedCompressed.length, null, decryptedJoinedCompressed, calculateCRC(decryptedJoinedCompressed, "IDAT")));
-            } else {
-                result.add(chunk);
-            }
-        }
-
-        return result;
-    }
-
 
     public byte[] encrypt(byte[] msg, CustomPublicKey key) throws BadPaddingException {
         BigInteger m = parseMsg(msg, key.n());
@@ -142,7 +55,9 @@ public class RSA {
     }
 
     private List<RawChunk> splitBetweenIDATs(byte[] bytes, List<Integer> sizes) {
-        return null;
+        var result = new ArrayList<RawChunk>();
+
+        return result;
     }
 
     private byte[] unPadByteArray(byte[] byteArray, int originalSize) {
@@ -244,7 +159,7 @@ public class RSA {
         return dividedList;
     }
 
-    private static byte[] concatMany(List<byte[]> arrays) {
+    private static byte[] concatLists(List<byte[]> arrays) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         if (arrays != null) {
             arrays.stream().filter(Objects::nonNull).forEach(array -> out.write(array, 0, array.length));

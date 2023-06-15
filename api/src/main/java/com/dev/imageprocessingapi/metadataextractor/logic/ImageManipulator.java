@@ -9,7 +9,10 @@ import com.dev.imageprocessingapi.model.Image;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.BadPaddingException;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
 
@@ -43,32 +46,11 @@ public class ImageManipulator {
     }
 
     @TrackExecutionTime
-    public List<RawChunk> encryptImage(Image image) {
-        var chunks = parser.readRawChunks(image);
+    public void encryptImage(Image image) throws DataFormatException, BadPaddingException, IOException {
         var keyPair = generateRSACustomKeyPair(2048);
         System.out.println("d: " + keyPair.privateKey().d());
         System.out.println("n: " + keyPair.privateKey().n());
         System.out.println(image.getId());
-
-        try {
-            return rsa.encryptECB(chunks, keyPair.publicKey(), keyPair.privateKey());
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
-        return chunks;
-    }
-
-    @TrackExecutionTime
-    public List<RawChunk> decryptImage(Image image, CustomPrivateKey privateKey) {
-        var chunks = parser.readRawChunks(image);
-
-        try {
-            return rsa.decryptECB(chunks, privateKey);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
-        return chunks;
+        rsa.encryptECB(image.getBytes().getData(), keyPair.publicKey());
     }
 }

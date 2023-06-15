@@ -21,11 +21,13 @@ import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.BadPaddingException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.zip.DataFormatException;
 
 @Slf4j
 @Service
@@ -71,46 +73,38 @@ public class ImageService {
     }
 
     public PNGMetadata getImageMetadata(String id) {
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         return parser.processImage(image);
     }
 
     public Image getImage(String id) {
-        return imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        return imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
     }
 
     public Image getImageMagnitude(String id) {
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
-        if (image.getMagnitude() == null)
-            throw new SpectrumNotGeneratedException();
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        if (image.getMagnitude() == null) throw new SpectrumNotGeneratedException();
 
         return image;
     }
 
     public Image getImagePhase(String id) {
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
-        if (image.getPhase() == null)
-            throw new SpectrumNotGeneratedException();
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        if (image.getPhase() == null) throw new SpectrumNotGeneratedException();
 
         return image;
     }
 
     public Map<String, Boolean> validateImage(String id) {
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         return validator.validate(image);
     }
 
     public void removeChunks(String id, ChunksToDeleteDTO chunksToDelete) {
         List<RawChunk> chunksToKeep;
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         if (chunksToDelete != null && chunksToDelete.chunks() != null) {
             chunksToKeep = manipulator.removeGivenChunks(image, chunksToDelete.chunks());
@@ -126,26 +120,13 @@ public class ImageService {
 
     @TrackExecutionTime
     public void encryptImage(String id) {
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
-        var chunks = manipulator.encryptImage(image);
-        Binary criticalChunksAsBytes = serializer.saveAsPNG(chunks);
-
-        image.setBytes(criticalChunksAsBytes);
-
-        imageRepository.save(image);
-    }
-
-    public void decryptImage(String id, CustomPrivateKey privateKey) {
-        var image = imageRepository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
-
-        var chunks = manipulator.decryptImage(image, privateKey);
-        Binary criticalChunksAsBytes = serializer.saveAsPNG(chunks);
-
-        image.setBytes(criticalChunksAsBytes);
-
-        imageRepository.save(image);
+        try {
+            manipulator.encryptImage(image);
+        } catch (DataFormatException | BadPaddingException | IOException e) {
+            System.out.println("EXCEPTION HERE");
+            throw new RuntimeException(e);
+        }
     }
 }
