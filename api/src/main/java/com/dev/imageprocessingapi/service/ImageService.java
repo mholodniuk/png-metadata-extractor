@@ -1,6 +1,7 @@
 package com.dev.imageprocessingapi.service;
 
 import com.dev.imageprocessingapi.encryption.CustomPrivateKey;
+import com.dev.imageprocessingapi.encryption.RSA;
 import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.zip.DataFormatException;
 
+import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -38,6 +41,7 @@ public class ImageService {
     private final ImageSerializer serializer;
     private final ImageManipulator manipulator;
     private final ChunkValidator validator;
+    private final RSA rsa;
 
     public String addImage(MultipartFile file) {
         byte[] bytes = validateAndRetrieveBytes(file);
@@ -118,13 +122,19 @@ public class ImageService {
         imageRepository.save(image);
     }
 
-    @TrackExecutionTime
     public void encryptImage(String id) {
         var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        var keyPair = generateRSACustomKeyPair(2048);
+        System.out.println("public e: " + keyPair.publicKey().e());
+        System.out.println("public d: " + keyPair.publicKey().n());
+        System.out.println("private d: " + keyPair.privateKey().d());
+        System.out.println("private n: " + keyPair.privateKey().n());
+        System.out.println(image.getId());
 
         try {
-            manipulator.encryptImage(image);
-        } catch (DataFormatException | BadPaddingException | IOException e) {
+            var encrypted = rsa.encryptECB(image, keyPair.publicKey());
+            imageRepository.save(encrypted);
+        } catch (Exception e) {
             System.out.println("EXCEPTION HERE");
             throw new RuntimeException(e);
         }

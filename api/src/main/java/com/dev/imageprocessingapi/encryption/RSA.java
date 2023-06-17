@@ -3,13 +3,18 @@ package com.dev.imageprocessingapi.encryption;
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.logic.ChunkInterpreter;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
+import com.dev.imageprocessingapi.model.Image;
 import lombok.AllArgsConstructor;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,8 +27,6 @@ import java.util.Objects;
 @Component
 @AllArgsConstructor
 public class RSA {
-    private final ChunkInterpreter interpreter;
-
     // kryterium porownawncze -> ograniczenia na dlugosc bloku
     // rozmowa - decyzje projektowe:
     // w jaki sposob zrealizowano szyfrowanie
@@ -31,14 +34,29 @@ public class RSA {
     // jak sobie radzimy z paddingiem
     // jak radzimy sobie z tym ze dane po zaszyfrowaniu maja wiekszy rozmiar
 
-    public void encryptECB(byte[] bytes, CustomPublicKey publicKey) throws IOException {
-        var inputStream = new ByteArrayInputStream(bytes);
-        var image = ImageIO.read(inputStream);
-        byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+    public Image encryptECB(Image image, CustomPublicKey publicKey) throws IOException {
+        var inputStream = new ByteArrayInputStream(image.getBytes().getData());
+        var imageFromBytes = ImageIO.read(inputStream);
 
-        System.out.println(formatByteArray(pixels));
-        System.out.println(pixels.length);
+        int imageHeight = imageFromBytes.getHeight();
+        int imageWidth = imageFromBytes.getWidth();
+        int imageType = imageFromBytes.getType();
+        byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
 
+        var bytes = saveImage(imageFromBytes, pixels, imageWidth, imageHeight, imageType);
+        image.setBytes(bytes);
+
+        return image;
+    }
+
+    private Binary saveImage(BufferedImage bufferedImage, byte[] pixels, int width, int height, int type) throws IOException {
+        var imageToSave = new BufferedImage(width, height, type);
+        imageToSave.setData(Raster.createRaster(bufferedImage.getSampleModel(), new DataBufferByte(pixels, pixels.length), new Point()));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(imageToSave, "png", byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+
+        return new Binary(BsonBinarySubType.BINARY, bytes);
     }
 
     public byte[] encrypt(byte[] msg, CustomPublicKey key) throws BadPaddingException {
@@ -54,11 +72,6 @@ public class RSA {
         return unPadByteArray(paddedResult, length);
     }
 
-    private List<RawChunk> splitBetweenIDATs(byte[] bytes, List<Integer> sizes) {
-        var result = new ArrayList<RawChunk>();
-
-        return result;
-    }
 
     private byte[] unPadByteArray(byte[] byteArray, int originalSize) {
         int paddedLength = byteArray.length;

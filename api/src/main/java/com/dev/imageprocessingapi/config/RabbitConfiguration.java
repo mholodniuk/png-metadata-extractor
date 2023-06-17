@@ -6,8 +6,10 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
+@Profile("prod")
 public class RabbitConfiguration {
     public static final String IMAGE_ID_QUEUE = "image_to_convert_queue";
     public static final String IMAGE_EXCHANGE = "image_to_convert_exchange";
