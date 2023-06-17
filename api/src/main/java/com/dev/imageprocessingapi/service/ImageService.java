@@ -1,8 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.encryption.CustomPrivateKey;
 import com.dev.imageprocessingapi.encryption.RSA;
-import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
 import com.dev.imageprocessingapi.exception.SpectrumNotGeneratedException;
@@ -22,13 +20,11 @@ import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.crypto.BadPaddingException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.zip.DataFormatException;
 
 import static com.dev.imageprocessingapi.encryption.Utils.generateRSACustomKeyPair;
 

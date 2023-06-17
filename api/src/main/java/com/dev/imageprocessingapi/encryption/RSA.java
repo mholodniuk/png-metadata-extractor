@@ -1,12 +1,14 @@
 package com.dev.imageprocessingapi.encryption;
 
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
-import com.dev.imageprocessingapi.metadataextractor.logic.ChunkInterpreter;
+import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
+import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
 import lombok.AllArgsConstructor;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
@@ -24,9 +26,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.calculateCRC;
+
 @Component
 @AllArgsConstructor
 public class RSA {
+    private final ImageManipulator imageManipulator;
+    private final ImageSerializer imageSerializer;
     // kryterium porownawncze -> ograniczenia na dlugosc bloku
     // rozmowa - decyzje projektowe:
     // w jaki sposob zrealizowano szyfrowanie
@@ -34,23 +40,37 @@ public class RSA {
     // jak sobie radzimy z paddingiem
     // jak radzimy sobie z tym ze dane po zaszyfrowaniu maja wiekszy rozmiar
 
-    public Image encryptECB(Image image, CustomPublicKey publicKey) throws IOException {
+    public Image encryptECB(Image image, CustomPublicKey publicKey) throws IOException, BadPaddingException {
         var inputStream = new ByteArrayInputStream(image.getBytes().getData());
         var imageFromBytes = ImageIO.read(inputStream);
-
-        int imageHeight = imageFromBytes.getHeight();
-        int imageWidth = imageFromBytes.getWidth();
-        int imageType = imageFromBytes.getType();
         byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
 
-        var bytes = saveImage(imageFromBytes, pixels, imageWidth, imageHeight, imageType);
+        int blockSize = (publicKey.n().bitLength() / 8) - 1;
+        var dividedPixels = divideByteArray(pixels, blockSize);
+
+        var encryptedPixels = new ArrayList<byte[]>();
+        for (byte[] buff : dividedPixels) {
+            var encryptedChunk = encrypt(buff, publicKey);
+            encryptedPixels.add(encryptedChunk);
+        }
+        var joinedEncrypted = concatLists(encryptedPixels);
+        var split = spitArray(joinedEncrypted, pixels.length);
+
+        var bytes = writeImage(imageFromBytes, split.getFirst());
         image.setBytes(bytes);
+
+        var extraBytes = split.getSecond();
+        var newChunk =  new RawChunk("xEnc", extraBytes.length, null, extraBytes, calculateCRC(extraBytes, "xENC"));
+        var modifiedChunks = imageManipulator.addCustomChunk(image, newChunk);
+        Binary bajts = imageSerializer.saveAsPNG(modifiedChunks);
+
+        image.setBytes(bajts);
 
         return image;
     }
 
-    private Binary saveImage(BufferedImage bufferedImage, byte[] pixels, int width, int height, int type) throws IOException {
-        var imageToSave = new BufferedImage(width, height, type);
+    private Binary writeImage(BufferedImage bufferedImage, byte[] pixels) throws IOException {
+        var imageToSave = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), bufferedImage.getType());
         imageToSave.setData(Raster.createRaster(bufferedImage.getSampleModel(), new DataBufferByte(pixels, pixels.length), new Point()));
         var byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(imageToSave, "png", byteArrayOutputStream);
@@ -132,18 +152,6 @@ public class RSA {
         return t;
     }
 
-    private static long countIDATs(List<RawChunk> chunks) {
-        return chunks.stream().filter(chunk -> chunk.type().equals("IDAT")).count();
-    }
-
-    private static List<Integer> getIDATSizes(List<RawChunk> chunks) {
-        return chunks.stream().filter(chunk -> chunk.type().equals("IDAT")).map(RawChunk::length).toList();
-    }
-
-    private static List<byte[]> joinIDATs(List<RawChunk> chunks) {
-        return chunks.stream().filter(chunk -> chunk.type().equals("IDAT")).map(RawChunk::rawBytes).toList();
-    }
-
     public static List<byte[]> divideByteArray(byte[] inputArray, int chunkSize) {
         List<byte[]> dividedList = new ArrayList<>();
 
@@ -158,18 +166,14 @@ public class RSA {
             startIndex += chunkSize;
         }
 
-//        // pad last chunk if not desired length
-//        int lastChunkIndex = dividedList.size() - 1;
-//        byte[] lastChunk = dividedList.get(lastChunkIndex);
-//
-//        // Check if the last chunk size is less than chunkSize
-//        if (lastChunk.length < chunkSize) {
-//            byte[] paddedChunk = new byte[chunkSize];
-//            System.arraycopy(lastChunk, 0, paddedChunk, 0, lastChunk.length);
-//            dividedList.set(lastChunkIndex, paddedChunk);
-//        }
-
         return dividedList;
+    }
+
+    private static Pair<byte[], byte[]> spitArray(byte[] byteArray, int sizeOfFirst) {
+        byte[] first = Arrays.copyOfRange(byteArray, 0, sizeOfFirst);
+        byte[] second = Arrays.copyOfRange(byteArray, sizeOfFirst, byteArray.length);
+
+        return Pair.of(first, second);
     }
 
     private static byte[] concatLists(List<byte[]> arrays) {
