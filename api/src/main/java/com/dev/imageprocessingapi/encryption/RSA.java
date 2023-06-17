@@ -2,6 +2,7 @@ package com.dev.imageprocessingapi.encryption;
 
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
+import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
 import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import com.dev.imageprocessingapi.model.Image;
@@ -33,6 +34,7 @@ import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils
 public class RSA {
     private final ImageManipulator imageManipulator;
     private final ImageSerializer imageSerializer;
+    private final ImageMetadataParser imageMetadataParser;
     // kryterium porownawncze -> ograniczenia na dlugosc bloku
     // rozmowa - decyzje projektowe:
     // w jaki sposob zrealizowano szyfrowanie
@@ -44,6 +46,7 @@ public class RSA {
         var inputStream = new ByteArrayInputStream(image.getBytes().getData());
         var imageFromBytes = ImageIO.read(inputStream);
         byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
+        System.out.println("original size: " + pixels.length);
 
         int blockSize = (publicKey.n().bitLength() / 8) - 1;
         var dividedPixels = divideByteArray(pixels, blockSize);
@@ -54,17 +57,42 @@ public class RSA {
             encryptedPixels.add(encryptedChunk);
         }
         var joinedEncrypted = concatLists(encryptedPixels);
-        var split = spitArray(joinedEncrypted, pixels.length);
+        System.out.println("len " + joinedEncrypted.length);
+        var split = splitArray(joinedEncrypted, pixels.length);
 
         var bytes = writeImage(imageFromBytes, split.getFirst());
         image.setBytes(bytes);
 
-        var extraBytes = split.getSecond();
-        var newChunk =  new RawChunk("xEnc", extraBytes.length, null, extraBytes, calculateCRC(extraBytes, "xENC"));
-        var modifiedChunks = imageManipulator.addCustomChunk(image, newChunk);
-        Binary bajts = imageSerializer.saveAsPNG(modifiedChunks);
+        var imageWithAppendedChunk = appendExtraChunk(image, split.getSecond(), dividedPixels.get(dividedPixels.size() - 1).length);
+        image.setBytes(imageWithAppendedChunk);
 
-        image.setBytes(bajts);
+        return image;
+    }
+
+    public Image decryptECB(Image image, CustomPrivateKey privateKey) throws IOException, BadPaddingException {
+        var inputStream = new ByteArrayInputStream(image.getBytes().getData());
+        var imageFromBytes = ImageIO.read(inputStream);
+        byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
+
+        int blockSize = (privateKey.n().bitLength() / 8) - 1;
+        int size = getExtraSizeInfo(image);
+        var dataInfo = getExtraDataInfo(image);
+        pixels = concatLists(List.of(pixels, dataInfo));
+        System.out.println("restored len " + pixels.length);
+
+        var dividedPixels = divideByteArray(pixels, blockSize);
+
+        var decryptedPixels = new ArrayList<byte[]>();
+        for (int i = 0; i < dividedPixels.size(); ++i) {
+            boolean isLast = i == dividedPixels.size() - 1;
+            var decryptedChunk = decrypt(dividedPixels.get(i), privateKey, isLast ? size : blockSize);
+            decryptedPixels.add(decryptedChunk);
+        }
+        var joinedDecrypted = concatLists(decryptedPixels);
+        System.out.println("restored size: " + joinedDecrypted.length);
+
+        var bytes = writeImage(imageFromBytes, joinedDecrypted);
+        image.setBytes(bytes);
 
         return image;
     }
@@ -77,6 +105,25 @@ public class RSA {
         byte[] bytes = byteArrayOutputStream.toByteArray();
 
         return new Binary(BsonBinarySubType.BINARY, bytes);
+    }
+
+    private Binary appendExtraChunk(Image image, byte[] bytes, int size) {
+        var sizeArr = ConversionUtils.encodeInteger(size);
+        var dataChunk = new RawChunk("xEnd", bytes.length, null, bytes, calculateCRC(bytes, "xEnd"));
+        var sizeChunk = new RawChunk("xEns", sizeArr.length, null, sizeArr, calculateCRC(sizeArr, "xEns"));
+        var modifiedChunks = imageManipulator.addCustomChunks(image, dataChunk, sizeChunk);
+        return imageSerializer.saveAsPNG(modifiedChunks);
+    }
+
+    private int getExtraSizeInfo(Image image) {
+        var sizeInfoChunk = imageMetadataParser.readRawChunks(image).stream()
+                .filter(chunk -> chunk.type().equals("xEns")).toList().get(0);
+        return ConversionUtils.fromHexDigits(ConversionUtils.formatHex(sizeInfoChunk.rawBytes()));
+    }
+
+    private byte[] getExtraDataInfo(Image image) {
+        return imageMetadataParser.readRawChunks(image).stream().filter(chunk -> chunk.type().equals("xEnd")).toList()
+                .get(0).rawBytes();
     }
 
     public byte[] encrypt(byte[] msg, CustomPublicKey key) throws BadPaddingException {
@@ -169,7 +216,7 @@ public class RSA {
         return dividedList;
     }
 
-    private static Pair<byte[], byte[]> spitArray(byte[] byteArray, int sizeOfFirst) {
+    private static Pair<byte[], byte[]> splitArray(byte[] byteArray, int sizeOfFirst) {
         byte[] first = Arrays.copyOfRange(byteArray, 0, sizeOfFirst);
         byte[] second = Arrays.copyOfRange(byteArray, sizeOfFirst, byteArray.length);
 

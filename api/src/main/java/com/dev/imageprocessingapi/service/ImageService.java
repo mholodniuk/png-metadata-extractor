@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.encryption.CustomPrivateKey;
 import com.dev.imageprocessingapi.encryption.RSA;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
 import com.dev.imageprocessingapi.exception.ImageUploadException;
@@ -130,6 +131,18 @@ public class ImageService {
         try {
             var encrypted = rsa.encryptECB(image, keyPair.publicKey());
             imageRepository.save(encrypted);
+        } catch (Exception e) {
+            System.out.println("EXCEPTION HERE");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void decryptImage(String id, CustomPrivateKey privateKey) {
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        try {
+            var decrypted = rsa.decryptECB(image, privateKey);
+            imageRepository.save(decrypted);
         } catch (Exception e) {
             System.out.println("EXCEPTION HERE");
             throw new RuntimeException(e);

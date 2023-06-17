@@ -81,10 +81,10 @@ public class ImageController {
         return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }
 
-//    @PatchMapping(path = "/{id}/decrypt")
-//    public ResponseEntity<?> decryptImage(@PathVariable @MongoObjectId String id, @RequestBody CustomPrivateKey privateKey) {
-//        imageService.decryptImage(id, privateKey);
-//        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
-//    }
+    @PatchMapping(path = "/{id}/decrypt")
+    public ResponseEntity<?> decryptImage(@PathVariable @MongoObjectId String id, @RequestBody CustomPrivateKey privateKey) {
+        imageService.decryptImage(id, privateKey);
+        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
+    }
 }
 

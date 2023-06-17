@@ -1,6 +1,5 @@
 package com.dev.imageprocessingapi.metadataextractor.logic;
 
-import com.dev.imageprocessingapi.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.exception.InvalidChunkDeletionException;
 import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.model.Image;
@@ -35,9 +34,11 @@ public class ImageManipulator {
                 .toList();
     }
 
-    public List<RawChunk> addCustomChunk(Image image, RawChunk chunk) {
+    public List<RawChunk> addCustomChunks(Image image, RawChunk... chunksToAppend) {
         var chunks = parser.readRawChunks(image);
-        chunks.add(chunks.size() - 1, chunk);
+        for (var chunk : chunksToAppend) {
+            chunks.add(chunks.size() - 1, chunk);
+        }
         return chunks;
     }
 }
