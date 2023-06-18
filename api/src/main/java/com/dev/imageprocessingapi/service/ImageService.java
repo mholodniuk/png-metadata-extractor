@@ -123,7 +123,7 @@ public class ImageService {
         var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
         var keyPair = generateRSACustomKeyPair(2048);
         System.out.println("public e: " + keyPair.publicKey().e());
-        System.out.println("public d: " + keyPair.publicKey().n());
+        System.out.println("public n: " + keyPair.publicKey().n());
         System.out.println("private d: " + keyPair.privateKey().d());
         System.out.println("private n: " + keyPair.privateKey().n());
         System.out.println(image.getId());

@@ -46,7 +46,6 @@ public class RSA {
         var inputStream = new ByteArrayInputStream(image.getBytes().getData());
         var imageFromBytes = ImageIO.read(inputStream);
         byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
-        System.out.println("original size: " + pixels.length);
 
         int blockSize = (publicKey.n().bitLength() / 8) - 1;
         var dividedPixels = divideByteArray(pixels, blockSize);
@@ -57,7 +56,6 @@ public class RSA {
             encryptedPixels.add(encryptedChunk);
         }
         var joinedEncrypted = concatLists(encryptedPixels);
-        System.out.println("len " + joinedEncrypted.length);
         var split = splitArray(joinedEncrypted, pixels.length);
 
         var bytes = writeImage(imageFromBytes, split.getFirst());
@@ -75,21 +73,20 @@ public class RSA {
         byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
 
         int blockSize = (privateKey.n().bitLength() / 8) - 1;
-        int size = getExtraSizeInfo(image);
+        int lastSize = getExtraSizeInfo(image);
         var dataInfo = getExtraDataInfo(image);
         pixels = concatLists(List.of(pixels, dataInfo));
         System.out.println("restored len " + pixels.length);
 
-        var dividedPixels = divideByteArray(pixels, blockSize);
+        var dividedPixels = divideByteArray(pixels, blockSize + 1);
 
         var decryptedPixels = new ArrayList<byte[]>();
         for (int i = 0; i < dividedPixels.size(); ++i) {
             boolean isLast = i == dividedPixels.size() - 1;
-            var decryptedChunk = decrypt(dividedPixels.get(i), privateKey, isLast ? size : blockSize);
+            var decryptedChunk = decrypt(dividedPixels.get(i), privateKey, isLast ? lastSize : blockSize);
             decryptedPixels.add(decryptedChunk);
         }
         var joinedDecrypted = concatLists(decryptedPixels);
-        System.out.println("restored size: " + joinedDecrypted.length);
 
         var bytes = writeImage(imageFromBytes, joinedDecrypted);
         image.setBytes(bytes);
