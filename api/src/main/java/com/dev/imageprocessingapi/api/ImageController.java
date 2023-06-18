@@ -89,5 +89,18 @@ public class ImageController {
         imageService.decryptImage(id, privateKey);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping(path = "/{id}/encrypt1")
+    public ResponseEntity<CustomKeyPair> encryptImage1(@PathVariable @MongoObjectId String id,
+                                                      @RequestBody(required = false) KeyLength keyLength) {
+        var keyPair = imageService.encryptCompressedImage(id, keyLength);
+        return ResponseEntity.ok(keyPair);
+    }
+
+    @PatchMapping(path = "/{id}/decrypt1")
+    public ResponseEntity<?> decryptImage1(@PathVariable @MongoObjectId String id, @RequestBody CustomPrivateKey privateKey) {
+        imageService.decryptCompressedImage(id, privateKey);
+        return ResponseEntity.noContent().build();
+    }
 }
 

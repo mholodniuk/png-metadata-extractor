@@ -146,4 +146,30 @@ public class ImageService {
             throw new RuntimeException(e);
         }
     }
+
+    public CustomKeyPair encryptCompressedImage(String id, KeyLength keyLength) {
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        var keyPair = generateRSACustomKeyPair(keyLength != null ? keyLength.length() : 2048);
+
+        try {
+            var encrypted = rsa.encryptCompressedECB(image, keyPair.publicKey());
+            imageRepository.save(encrypted);
+            return keyPair;
+        } catch (Exception e) {
+            System.out.println("EXCEPTION HERE " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void decryptCompressedImage(String id, CustomPrivateKey privateKey) {
+        var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        try {
+            var decrypted = rsa.decryptCompressedECB(image, privateKey);
+            imageRepository.save(decrypted);
+        } catch (Exception e) {
+            System.out.println("EXCEPTION HERE");
+            throw new RuntimeException(e);
+        }
+    }
 }

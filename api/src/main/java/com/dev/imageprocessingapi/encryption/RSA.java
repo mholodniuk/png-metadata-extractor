@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.calculateCRC;
+import static com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils.formatHex;
 
 @Component
 @AllArgsConstructor
@@ -85,6 +86,96 @@ public class RSA {
 
         var bytes = writeImage(imageFromBytes, joinedDecrypted);
         image.setBytes(bytes);
+
+        return image;
+    }
+
+    public Image encryptCompressedECB(Image image, CustomPublicKey publicKey) throws BadPaddingException {
+        var IDATs = imageMetadataParser.readRawChunks(image).stream().filter(chunk -> chunk.type().equals("IDAT"))
+                .map(RawChunk::rawBytes).toList();
+
+        if (IDATs.size() > 1) {
+            throw new IllegalArgumentException("Encrypting more than one IDAT not supported");
+        }
+
+        var bytes = IDATs.get(0);
+
+        int blockSize = (publicKey.n().bitLength() / 8) - 1;
+        var dividedPixels = divideByteArray(bytes, blockSize);
+
+        var encryptedPixels = new ArrayList<byte[]>();
+        for (byte[] buff : dividedPixels) {
+            System.out.println(buff.length);
+            System.out.println(formatByteArray(buff));
+            var encryptedChunk = encrypt(buff, publicKey);
+            encryptedPixels.add(encryptedChunk);
+        }
+        var joinedEncrypted = concatLists(encryptedPixels);
+        System.out.println("joinedEncrypted " + formatByteArray(joinedEncrypted));
+        var split = splitArray(joinedEncrypted, bytes.length);
+
+        var sizeArr = ConversionUtils.encodeInteger(split.getSecond().length);
+        var dataChunk = new RawChunk("xEnd", split.getSecond().length, null, split.getSecond(), calculateCRC(split.getSecond(), "xEnd"));
+        var sizeChunk = new RawChunk("xEns", sizeArr.length, null, sizeArr, calculateCRC(sizeArr, "xEns"));
+        var modifiedChunks = imageManipulator.addCustomChunks(image, dataChunk, sizeChunk);
+
+        var result = new ArrayList<RawChunk>();
+        for (var chunk : modifiedChunks) {
+            if (chunk.type().equals("IDAT")) {
+                result.add(new RawChunk("IDAT", split.getFirst().length, null, split.getFirst(), calculateCRC(split.getFirst(), "IDAT")));
+            } else {
+                result.add(chunk);
+            }
+        }
+
+        var modifiedBytes = imageSerializer.saveAsPNG(result);
+        image.setBytes(modifiedBytes);
+
+        return image;
+    }
+
+    public Image decryptCompressedECB(Image image, CustomPrivateKey privateKey) throws BadPaddingException {
+        var IDATs = imageMetadataParser.readRawChunks(image).stream().filter(chunk -> chunk.type().equals("IDAT"))
+                .map(RawChunk::rawBytes).toList();
+
+        if (IDATs.size() > 1) {
+            throw new IllegalArgumentException("Decrypting more than one IDAT not supported");
+        }
+
+        var bytes = IDATs.get(0);
+        int ogSize = bytes.length;
+        System.out.println(ogSize);
+
+        int blockSize = (privateKey.n().bitLength() / 8) - 1;
+        var dataInfo = getExtraDataInfo(image);
+        bytes = concatLists(List.of(bytes, dataInfo));
+        System.out.println("bytes " + formatByteArray(bytes));
+
+        var dividedPixels = divideByteArray(bytes, blockSize + 1);
+        System.out.println(dividedPixels.size());
+
+        var decryptedPixels = new ArrayList<byte[]>();
+        for (int i = 0; i < dividedPixels.size(); ++i) {
+            boolean isLast = i == dividedPixels.size() - 1;
+            var decryptedChunk = decrypt(dividedPixels.get(i), privateKey, isLast ? (ogSize - blockSize) : blockSize);
+            System.out.println(decryptedChunk.length);
+            System.out.println(formatByteArray(decryptedChunk));
+            decryptedPixels.add(decryptedChunk);
+        }
+        var joinedDecrypted = concatLists(decryptedPixels);
+
+        var imageChunks = imageMetadataParser.readRawChunks(image);
+        var result = new ArrayList<RawChunk>();
+        for (var chunk : imageChunks) {
+            if (chunk.type().equals("IDAT")) {
+                result.add(new RawChunk("IDAT", joinedDecrypted.length, null, joinedDecrypted, calculateCRC(joinedDecrypted, "IDAT")));
+            } else {
+                result.add(chunk);
+            }
+        }
+
+        var modifiedBytes = imageSerializer.saveAsPNG(result);
+        image.setBytes(modifiedBytes);
 
         return image;
     }
