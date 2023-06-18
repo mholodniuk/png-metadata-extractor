@@ -1,5 +1,6 @@
 package com.dev.imageprocessingapi.service;
 
+import com.dev.imageprocessingapi.encryption.CustomKeyPair;
 import com.dev.imageprocessingapi.encryption.CustomPrivateKey;
 import com.dev.imageprocessingapi.encryption.RSA;
 import com.dev.imageprocessingapi.exception.ImageNotFoundException;
@@ -13,6 +14,7 @@ import com.dev.imageprocessingapi.metadataextractor.domain.RawChunk;
 import com.dev.imageprocessingapi.model.Image;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
+import com.dev.imageprocessingapi.model.dto.KeyLength;
 import com.dev.imageprocessingapi.repository.ImageRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,20 +121,16 @@ public class ImageService {
         imageRepository.save(image);
     }
 
-    public void encryptImage(String id) {
+    public CustomKeyPair encryptImage(String id, KeyLength keyLength) {
         var image = imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
-        var keyPair = generateRSACustomKeyPair(2048);
-        System.out.println("public e: " + keyPair.publicKey().e());
-        System.out.println("public n: " + keyPair.publicKey().n());
-        System.out.println("private d: " + keyPair.privateKey().d());
-        System.out.println("private n: " + keyPair.privateKey().n());
-        System.out.println(image.getId());
+        var keyPair = generateRSACustomKeyPair(keyLength != null ? keyLength.length() : 2048);
 
         try {
             var encrypted = rsa.encryptECB(image, keyPair.publicKey());
             imageRepository.save(encrypted);
+            return keyPair;
         } catch (Exception e) {
-            System.out.println("EXCEPTION HERE");
+            System.out.println("EXCEPTION HERE " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

@@ -1,9 +1,11 @@
 package com.dev.imageprocessingapi.api;
 
 import com.dev.imageprocessingapi.api.utils.ResponseEntityUtils;
+import com.dev.imageprocessingapi.encryption.CustomKeyPair;
 import com.dev.imageprocessingapi.encryption.CustomPrivateKey;
 import com.dev.imageprocessingapi.model.PNGMetadata;
 import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
+import com.dev.imageprocessingapi.model.dto.KeyLength;
 import com.dev.imageprocessingapi.service.ImageService;
 import com.dev.imageprocessingapi.validation.MongoObjectId;
 import lombok.AllArgsConstructor;
@@ -76,15 +78,16 @@ public class ImageController {
     }
 
     @PatchMapping(path = "/{id}/encrypt")
-    public ResponseEntity<?> encryptImage(@PathVariable @MongoObjectId String id) {
-        imageService.encryptImage(id);
-        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
+    public ResponseEntity<CustomKeyPair> encryptImage(@PathVariable @MongoObjectId String id,
+                                                      @RequestBody(required = false) KeyLength keyLength) {
+        var keyPair = imageService.encryptImage(id, keyLength);
+        return ResponseEntity.ok(keyPair);
     }
 
     @PatchMapping(path = "/{id}/decrypt")
     public ResponseEntity<?> decryptImage(@PathVariable @MongoObjectId String id, @RequestBody CustomPrivateKey privateKey) {
         imageService.decryptImage(id, privateKey);
-        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
 

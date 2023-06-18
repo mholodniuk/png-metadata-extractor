@@ -35,17 +35,12 @@ public class RSA {
     private final ImageManipulator imageManipulator;
     private final ImageSerializer imageSerializer;
     private final ImageMetadataParser imageMetadataParser;
-    // kryterium porownawncze -> ograniczenia na dlugosc bloku
-    // rozmowa - decyzje projektowe:
-    // w jaki sposob zrealizowano szyfrowanie
-    // ktore czesci pliku sa szyforwane
-    // jak sobie radzimy z paddingiem
-    // jak radzimy sobie z tym ze dane po zaszyfrowaniu maja wiekszy rozmiar
 
     public Image encryptECB(Image image, CustomPublicKey publicKey) throws IOException, BadPaddingException {
         var inputStream = new ByteArrayInputStream(image.getBytes().getData());
         var imageFromBytes = ImageIO.read(inputStream);
         byte[] pixels = ((DataBufferByte) imageFromBytes.getRaster().getDataBuffer()).getData();
+        System.out.println("original image size: " + pixels.length);
 
         int blockSize = (publicKey.n().bitLength() / 8) - 1;
         var dividedPixels = divideByteArray(pixels, blockSize);
@@ -76,7 +71,6 @@ public class RSA {
         int lastSize = getExtraSizeInfo(image);
         var dataInfo = getExtraDataInfo(image);
         pixels = concatLists(List.of(pixels, dataInfo));
-        System.out.println("restored len " + pixels.length);
 
         var dividedPixels = divideByteArray(pixels, blockSize + 1);
 
@@ -87,6 +81,7 @@ public class RSA {
             decryptedPixels.add(decryptedChunk);
         }
         var joinedDecrypted = concatLists(decryptedPixels);
+        System.out.println("restored image size: " + joinedDecrypted.length);
 
         var bytes = writeImage(imageFromBytes, joinedDecrypted);
         image.setBytes(bytes);
