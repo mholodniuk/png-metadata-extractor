@@ -1,15 +1,13 @@
 package com.dev.imageprocessingapi.service;
 
-import com.dev.imageprocessingapi.exception.ImageNotFoundException;
-import com.dev.imageprocessingapi.exception.ImageUploadException;
-import com.dev.imageprocessingapi.exception.SpectrumNotGeneratedException;
-import com.dev.imageprocessingapi.metadataextractor.logic.ChunkValidator;
-import com.dev.imageprocessingapi.metadataextractor.logic.ImageManipulator;
-import com.dev.imageprocessingapi.metadataextractor.logic.ImageMetadataParser;
-import com.dev.imageprocessingapi.metadataextractor.logic.ImageSerializer;
+import com.dev.imageprocessingapi.metadataextractor.MetadataExtractorFacade;
+import com.dev.imageprocessingapi.infrastructure.exception.ImageNotFoundException;
+import com.dev.imageprocessingapi.infrastructure.exception.ImageUploadException;
+import com.dev.imageprocessingapi.infrastructure.exception.SpectrumNotGeneratedException;
+import com.dev.imageprocessingapi.infrastructure.service.ImageService;
 import com.dev.imageprocessingapi.model.Image;
-import com.dev.imageprocessingapi.model.dto.ChunksToDeleteDTO;
-import com.dev.imageprocessingapi.repository.ImageRepository;
+import com.dev.imageprocessingapi.infrastructure.dto.ChunksToDeleteDTO;
+import com.dev.imageprocessingapi.infrastructure.repository.ImageRepository;
 import lombok.SneakyThrows;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -38,13 +36,7 @@ public class ImageServiceTest {
     @MockBean
     private ImageRepository imageRepository;
     @MockBean
-    private ImageMetadataParser parser;
-    @MockBean
-    private ImageSerializer serializer;
-    @MockBean
-    private ImageManipulator manipulator;
-    @MockBean
-    private ChunkValidator validator;
+    private MetadataExtractorFacade metadataExtractorFacade;
     @Autowired
     private ImageService imageService;
 
@@ -96,7 +88,7 @@ public class ImageServiceTest {
 
         imageService.getImageMetadata(mockId);
 
-        then(parser).should().processImage(image);
+        then(metadataExtractorFacade).should().processImage(image);
     }
 
     @Test
@@ -133,8 +125,8 @@ public class ImageServiceTest {
 
         imageService.removeChunks(mockId, null);
 
-        then(manipulator).should().removeAncillaryChunks(image);
-        then(manipulator).should(never()).removeGivenChunks(any(), any());
+        then(metadataExtractorFacade).should().removeAncillaryChunks(image);
+        then(metadataExtractorFacade).should(never()).removeSelectedChunks(any(), any());
 
     }
 
@@ -147,8 +139,8 @@ public class ImageServiceTest {
 
         imageService.removeChunks(mockId, chunksToDelete);
 
-        then(manipulator).should().removeGivenChunks(image, chunksToDelete.chunks());
-        then(manipulator).should(never()).removeAncillaryChunks(any());
+        then(metadataExtractorFacade).should().removeSelectedChunks(image, chunksToDelete.chunks());
+        then(metadataExtractorFacade).should(never()).removeAncillaryChunks(any());
     }
 
     @Test
@@ -157,11 +149,11 @@ public class ImageServiceTest {
         var image = new Image();
         var chunksToDelete = new ChunksToDeleteDTO(List.of("bKGD", "gAMA"));
         given(imageRepository.findById(mockId)).willReturn(Optional.of(image));
-        when(manipulator.removeAncillaryChunks(image)).thenReturn(Collections.emptyList());
+        when(metadataExtractorFacade.removeAncillaryChunks(image)).thenReturn(Collections.emptyList());
 
         imageService.removeChunks(mockId, chunksToDelete);
 
-        then(serializer).should().saveAsPNG(Collections.emptyList());
+        then(metadataExtractorFacade).should().saveAsPNG(Collections.emptyList());
         then(imageRepository).should().save(image);
     }
 }
