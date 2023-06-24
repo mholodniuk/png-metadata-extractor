@@ -1,6 +1,6 @@
 # PNG file metadata extractor
 
-Currently available chunks: bKGD, cHRM, gAMA, IHDR, pHYs, PLTE, tEXt, tIME, zTXt
+Currently supported chunks: bKGD, cHRM, gAMA, IHDR, pHYs, PLTE, tEXt, tIME, zTXt
 
 See more about PNG format in [documentation](https://www.w3.org/TR/png/)
 
