@@ -10,17 +10,15 @@ from pymongo import MongoClient
 
 EXCHANGE_NAME = 'image_to_convert_exchange'
 QUEUE_NAME = 'image_to_convert_queue'
-ROUTING_KEY = 'routing-key-fft'
 RABBIT_HOSTNAME = 'rabbit'
 MONGO_URI = 'mongodb://mongo:27017'
 DATABASE_NAME = 'png'
 COLLECTION_NAME = 'images'
 
 class rabbitMQServer():
-    def __init__(self, queue, host, routing_key, mongo_uri, exchange=''):
+    def __init__(self, queue, host, mongo_uri, exchange=''):
         self.queue = queue
         self.host = host
-        self.routing_key = routing_key
         self.exchange = exchange
         self.mongo_client = MongoClient(mongo_uri)
         self.start_server()
@@ -105,5 +103,5 @@ class rabbitMQServer():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    server = rabbitMQServer(QUEUE_NAME, RABBIT_HOSTNAME, ROUTING_KEY, MONGO_URI, EXCHANGE_NAME)
+    server = rabbitMQServer(QUEUE_NAME, RABBIT_HOSTNAME, MONGO_URI, EXCHANGE_NAME)
     server.get_messages()
