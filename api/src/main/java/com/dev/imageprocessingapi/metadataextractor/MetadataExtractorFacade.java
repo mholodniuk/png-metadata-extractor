@@ -33,11 +33,6 @@ public class MetadataExtractorFacade {
     }
 
     @TrackExecutionTime
-    public List<RawChunk> readRawChunks(Image image) {
-        return imageMetadataParser.readRawChunks(image);
-    }
-
-    @TrackExecutionTime
     public Binary saveAsPNG(List<RawChunk> chunks) {
         return imageSerializer.saveAsPNG(chunks);
     }

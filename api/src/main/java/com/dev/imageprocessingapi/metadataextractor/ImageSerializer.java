@@ -1,7 +1,6 @@
 package com.dev.imageprocessingapi.metadataextractor;
 
 import com.dev.imageprocessingapi.metadataextractor.exception.ChunksSavingException;
-import com.dev.imageprocessingapi.infrastructure.event.annotation.TrackExecutionTime;
 import com.dev.imageprocessingapi.metadataextractor.model.RawChunk;
 import com.dev.imageprocessingapi.metadataextractor.utils.ConversionUtils;
 import org.bson.BsonBinarySubType;
@@ -16,7 +15,7 @@ import java.util.List;
 public class ImageSerializer {
     private static final String PNGHeader = "89504e470d0a1a0a";
 
-    Binary saveAsPNG(List<RawChunk> chunks) {
+    public Binary saveAsPNG(List<RawChunk> chunks) {
         var resultOutputStream = new ByteArrayOutputStream();
         try {
             resultOutputStream.write(ConversionUtils.parseHexString(PNGHeader));

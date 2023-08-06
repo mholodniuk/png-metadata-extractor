@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.zip.CRC32;
 
-public class CRCTests {
+public class CRCTest {
     @Test
     void crcTest() {
         String expectedCRC = "7419f340";
